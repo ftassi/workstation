@@ -1,0 +1,41 @@
+galaxy_info:
+  role_name: onepassword_cli
+  author: Hidenori Matsuki
+  description: Install 1Password CLI
+  issue_tracker_url: https://github.com/mazgi/ansible-galaxy.1password-cli/issues
+  license: BSD-3-Clause
+
+  min_ansible_version: 2.9
+
+  # If this a Container Enabled role, provide the minimum Ansible Container version.
+  # min_ansible_container_version:
+
+  platforms:
+    # https://galaxy.ansible.com/api/v1/platforms/?name__icontains=Debian
+    - name: Debian
+      versions:
+        - buster # 10
+        - stretch # 9
+    # https://galaxy.ansible.com/api/v1/platforms/?name__icontains=Gentoo
+    - name: Gentoo
+      versions:
+        - all
+    # https://galaxy.ansible.com/api/v1/platforms/?name__icontains=Ubuntu
+    - name: Ubuntu
+      versions:
+        - focal # 20.04
+        - bionic # 18.04
+
+  galaxy_tags:
+    []
+    # List tags for your role here, one per line. A tag is a keyword that describes
+    # and categorizes the role. Users find roles by searching for tags. Be sure to
+    # remove the '[]' above, if you add tags to this list.
+    #
+    # NOTE: A tag is limited to a single word comprised of alphanumeric characters.
+    #       Maximum 20 tags per role.
+
+dependencies:
+  []
+  # List your role dependencies here, one per line. Be sure to remove the '[]' above,
+  # if you add dependencies to this list.

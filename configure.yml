@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  become: yes
+  
+  roles:
+   - role: onepasswordcli
+     vars:
+       onepassword_cli:
+         version: 2.24.0

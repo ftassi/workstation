@@ -1,0 +1,29 @@
+version: "3.7"
+services:
+  provisioner:
+    build: Dockerfile.d/provisioner
+    working_dir: /workspace
+    volumes:
+      - provisioner-tmp:/tmp/provisioning
+      - provisioner-dotansible:/root/.ansible # for macOS
+      - provisioner-dotansible:/developer/.ansible
+      - provisioner-dotconfig:/root/.config # for macOS
+      - provisioner-dotconfig:/developer/.config
+      - /root/.ssh
+      - ${HOME}/.ssh/id_rsa:/root/.ssh/id_rsa:ro
+      - .:/workspace
+    environment:
+      - TF_DATA_DIR=/tmp/provisioner
+    command:
+      - bash
+      - -c
+      - |
+        ansible-lint tests/test.yml
+        ansible-playbook -i localhost, -c local -u $$(id -un) tests/test.yml
+volumes:
+  provisioner-dotansible:
+    driver: local
+  provisioner-dotconfig:
+    driver: local
+  provisioner-tmp:
+    driver: local

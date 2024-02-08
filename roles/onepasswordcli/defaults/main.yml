@@ -1,0 +1,4 @@
+---
+onepassword_cli_install_directory: "/usr/local/bin"
+onepassword_cli:
+  version: 1.5.0

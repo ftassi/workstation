@@ -1,0 +1,9 @@
+---
+- name: Test via Vagrant
+  hosts: all
+  roles:
+    - role: ../..
+      become: true
+      vars:
+        onepassword_cli:
+          version: 0.9.2
