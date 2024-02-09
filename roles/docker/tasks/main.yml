@@ -1,0 +1,49 @@
+- name: Ensure old versions of Docker are not installed.
+  package:
+    name:
+      - docker
+      - docker.io
+      - docker-engine
+    state: absent
+
+- name: Ensure dependencies are installed.
+  apt:
+    name:
+      - apt-transport-https
+      - ca-certificates
+      - curl
+      - software-properties-common
+    state: present
+
+- name: Ensure additional dependencies are installed (on Ubuntu >= 20.04).
+  apt:
+    name: gnupg
+    state: present
+
+- name: Import docker repository key
+  ansible.builtin.get_url:
+    url: https://download.docker.com/linux/ubuntu/gpg
+    dest: /etc/apt/trusted.gpg.d/docker.asc
+    mode: '0644'
+    force: false
+
+- name: Add Docker repository.
+  apt_repository:
+    repo: "deb [arch=amd64 signed-by=/etc/apt/trusted.gpg.d/docker.asc] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+    filename: "docker"
+    update_cache: true
+
+- name: Ensure docker will be installed from repo
+  shell: apt-cache policy docker-ce
+
+- name: Install docker-ce
+  ansible.builtin.apt:
+    name: docker-ce
+    state: present
+
+- name: adding existing user '{{ username_on_the_host }}' to group sudo
+  user:
+    name: '{{ username_on_the_host }}'
+    groups: docker
+    append: yes

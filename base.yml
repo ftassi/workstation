@@ -1,0 +1,10 @@
+---
+
+- hosts: all
+  vars:
+    username_on_the_host: "{{ lookup('env','USER') }}"
+  
+  roles:
+    - role: ssh
+    - role: docker
+      become: true

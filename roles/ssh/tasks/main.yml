@@ -1,0 +1,20 @@
+- name: Create ssh dir
+  ansible.builtin.file:
+    path: ~/.ssh
+    state: directory
+    mode: '0700'
+- name: Copy ssh private key
+  ansible.builtin.copy:
+    src: files/id_rsa 
+    dest: ~/.ssh/id_rsa
+    mode: '0600'
+- name: Copy ssh public key
+  ansible.builtin.copy:
+    src: files/id_rsa.pub
+    dest: ~/.ssh/id_rsa.pub
+    mode: '0644'
+- name: Copy ssh configuration
+  ansible.builtin.copy:
+    src: files/config
+    dest: ~/.ssh/config
+    mode: '0664'
