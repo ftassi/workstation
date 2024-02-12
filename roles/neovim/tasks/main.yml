@@ -1,0 +1,26 @@
+- name: Ensure neovim is not installed from repo
+  ansible.builtin.apt: 
+    pkg:
+    - vim
+    - neovim
+    state: absent
+
+- name: Download and install latest neovim
+  ansible.builtin.unarchive:
+    src: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    dest: /opt/
+    remote_src: yes
+    extra_opts:
+      - --transform
+      - s/nvim-linux64/nvim/
+
+- name: Install git related stuff
+  ansible.builtin.apt:
+    pkg:
+    - python3-pip
+
+- name: Install python neovim module
+  become: false
+  ansible.builtin.pip:
+    name: neovim
+    extra_args: --user

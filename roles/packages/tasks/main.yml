@@ -1,0 +1,12 @@
+- name: Install git related stuff
+  ansible.builtin.apt:
+    pkg:
+    - curl
+    - wget
+    - httpie
+    - git
+    - git-crypt
+    - fzf
+    - zsh
+    - tmux
+

@@ -1,0 +1,40 @@
+- name: Install git related stuff
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - git
+    - git-crypt
+    - stow
+
+- name: Copy git crypt key
+  ansible.builtin.copy:
+    src: files/.git-crypt-key
+    dest: ~/.git-crypt-key
+    mode: '0600'
+
+- name: Clone git dotfiles repo
+  ansible.builtin.git:
+    repo: 'git@github.com:ftassi/dotfiles.git'
+    dest: ~/dotfiles
+
+- name: Unlock secrects in dotfiles repo
+  ansible.builtin.shell: git-crypt unlock ~/.git-crypt-key
+  args:
+    chdir: ~/dotfiles
+
+- name: Install dotfiles
+  ansible.builtin.shell: chdir=~/dotfiles stow {{item}}
+  with_items:
+    - git
+    - intelephense
+    - nvim
+    - antigen
+    - zsh
+
+- name: Set zsh as default shell for '{{ username_on_the_host }}'
+  become: true
+  user:
+    name: '{{ username_on_the_host }}'
+    shell: /usr/bin/zsh
+    append: yes
+

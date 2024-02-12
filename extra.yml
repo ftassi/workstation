@@ -1,0 +1,17 @@
+---
+
+- hosts: all
+  vars:
+    username_on_the_host: "{{ lookup('env','USER') }}"
+  
+  roles:
+    - role: packages
+      become: yes
+    - role: neovim
+      become: yes
+    - role: dotfiles
+    - role: onepasswordcli
+      become: yes
+      vars:
+        onepassword_cli:
+          version: 2.24.0
