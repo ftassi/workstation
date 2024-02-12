@@ -14,6 +14,23 @@
       - --transform
       - s/nvim-linux64/nvim/
 
+- name: Ensure opt/bin directory
+  ansible.builtin.file:
+    path: /opt/bin
+    state: directory
+
+- name: Simlink neovim 
+  ansible.builtin.file:
+    src: /opt/nvim/bin/nvim
+    dest: /opt/bin/nvim
+    state: link
+
+- name: Simlink vim to neovim
+  ansible.builtin.file:
+    src: /opt/nvim/bin/nvim
+    dest: /opt/bin/vim
+    state: link
+
 - name: Install git related stuff
   ansible.builtin.apt:
     pkg:
