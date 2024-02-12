@@ -1,37 +1,12 @@
 - name: Ensure neovim is not installed from repo
+  become: true
   ansible.builtin.apt: 
     pkg:
     - vim
     - neovim
     state: absent
 
-- name: Download and install latest neovim
-  ansible.builtin.unarchive:
-    src: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    dest: /opt/
-    remote_src: yes
-    extra_opts:
-      - --transform
-      - s/nvim-linux64/nvim/
-
-- name: Ensure opt/bin directory
-  ansible.builtin.file:
-    path: /opt/bin
-    state: directory
-
-- name: Simlink neovim 
-  ansible.builtin.file:
-    src: /opt/nvim/bin/nvim
-    dest: /opt/bin/nvim
-    state: link
-
-- name: Simlink vim to neovim
-  ansible.builtin.file:
-    src: /opt/nvim/bin/nvim
-    dest: /opt/bin/vim
-    state: link
-
-- name: Install git related stuff
+- name: Install neovim deps
   ansible.builtin.apt:
     pkg:
     - python3-pip
@@ -41,3 +16,37 @@
   ansible.builtin.pip:
     name: neovim
     extra_args: --user
+
+- name: Ensure ~/opt directory
+  ansible.builtin.file:
+    path: /home/{{ username_on_the_host }}/opt
+    state: directory
+
+- name: Ensure ~/opt/bin directory
+  ansible.builtin.file:
+    path: /home/{{ username_on_the_host }}/opt/bin
+    state: directory
+       
+- name: Download and install latest neovim
+  ansible.builtin.unarchive:
+    src: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    dest: /home/{{ username_on_the_host }}/opt/
+    remote_src: yes
+    extra_opts:
+      - --transform
+      - s/nvim-linux64/nvim/
+
+- name: Simlink neovim 
+  ansible.builtin.file:
+    src: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim
+    dest: /home/{{ username_on_the_host }}/opt/bin/nvim
+    state: link
+
+- name: Simlink vim to neovim
+  ansible.builtin.file:
+    src: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim
+    dest: /home/{{ username_on_the_host }}/opt/bin/vim
+    state: link
+
+- name: Install nvim plugin
+  ansible.builtin.shell: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim +PlugInstall +qall

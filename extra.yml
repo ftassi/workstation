@@ -8,7 +8,6 @@
     - role: packages
       become: yes
     - role: neovim
-      become: yes
     - role: dotfiles
     - role: onepasswordcli
       become: yes
