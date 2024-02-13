@@ -27,18 +27,9 @@
               30336563653430656164656264626432323532656332313534376532633364313064366636343366
               3034393232373232306138303163313961663264363563376566
   roles:
-    - role: packages
-      become: yes
     - role: neovim
     - role: dotfiles
-    - role: onepasswordcli
-      become: yes
+    - role: devtools
       vars:
         onepassword_cli:
           version: 2.24.0
-  tasks:
-    - name: 1password cli signin
-      shell: echo {{ master_password }} | op account add --address catena-tassi.1password.com --email tassi.francesco@gmail.com --secret-key {{ onep_personal_secret }} --shorthand personal --signin
-
-    - name: 1password cli signin
-      shell: echo {{ master_password }} | op account add --address my.1password.com --email francesco.tassi@soisy.it --secret-key {{ onep_soisy_secret }} --shorthand soisy --signin
