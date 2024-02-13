@@ -32,3 +32,14 @@
 
 - name: signin soisy account
   shell: echo {{ master_password }} | op account add --address my.1password.com --email francesco.tassi@soisy.it --secret-key {{ onep_soisy_secret }} --shorthand soisy --signin
+
+- name: Download aws-cli installer
+  ansible.builtin.unarchive:
+    src: https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip
+    dest: /tmp
+    remote_src: yes
+
+- name: Install aws-cli
+  ansible.builtin.shell:
+    chdir: /tmp/aws
+    cmd: ./install --bin-dir ~/opt/bin --install-dir ~/opt/aws-cli --update
