@@ -6,48 +6,26 @@
     - neovim
     state: absent
 
+- name: Add nvim ppa
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:neovim-ppa/unstable
+
 - name: Install neovim deps
   become: true
   ansible.builtin.apt:
     pkg:
-    - python3-pip
+      - python3-dev
+      - python3-pip
+      - python3-neovim
+      - neovim
 
-- name: Install python neovim module
-  become: false
-  ansible.builtin.pip:
-    name: neovim
-    extra_args: --user
+- name: Use nvim as vim alternative
+  become: true
+  community.general.alternatives:
+    name: vim
+    path: /usr/bin/nvim
+    link: /usr/bin/vim
+    priority: 10
+    state: present
 
-- name: Ensure ~/opt directory
-  ansible.builtin.file:
-    path: /home/{{ username_on_the_host }}/opt
-    state: directory
-
-- name: Ensure ~/opt/bin directory
-  ansible.builtin.file:
-    path: /home/{{ username_on_the_host }}/opt/bin
-    state: directory
-       
-- name: Download and install latest neovim
-  ansible.builtin.unarchive:
-    src: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    dest: /home/{{ username_on_the_host }}/opt/
-    remote_src: yes
-    extra_opts:
-      - --transform
-      - s/nvim-linux64/nvim/
-
-- name: Simlink neovim 
-  ansible.builtin.file:
-    src: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim
-    dest: /home/{{ username_on_the_host }}/opt/bin/nvim
-    state: link
-
-- name: Simlink vim to neovim
-  ansible.builtin.file:
-    src: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim
-    dest: /home/{{ username_on_the_host }}/opt/bin/vim
-    state: link
-
-- name: Install nvim plugin
-  ansible.builtin.shell: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim +PlugInstall +qall
