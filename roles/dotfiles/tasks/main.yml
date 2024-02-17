@@ -38,5 +38,3 @@
     shell: /usr/bin/zsh
     append: yes
 
-- name: Install nvim plugin
-  ansible.builtin.shell: nvim +PlugInstall +qall
