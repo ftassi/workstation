@@ -11,12 +11,7 @@
   ansible.builtin.apt:
     pkg:
     - python3-pip
-
-- name: Install python neovim module
-  become: false
-  ansible.builtin.pip:
-    name: neovim
-    extra_args: --user
+    - python3-pynvim
 
 - name: Ensure ~/opt directory
   ansible.builtin.file:
@@ -30,7 +25,7 @@
        
 - name: Download and install latest neovim
   ansible.builtin.unarchive:
-    src: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
+    src: https://github.com/neovim/neovim/releases/download/nightly/nvim-linux64.tar.gz
     dest: /home/{{ username_on_the_host }}/opt/
     remote_src: yes
     extra_opts:
