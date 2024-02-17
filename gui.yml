@@ -10,11 +10,10 @@
         pkg:
         - flatpak
 
-    - name: Install 1password
-      community.general.flatpak:
-        name: https://downloads.1password.com/linux/flatpak/1Password.flatpakref
-        state: present
-        method: user
+    - name: Install 1password latest from deb
+      become: true
+      ansible.builtin.apt:
+        deb: https://downloads.1password.com/linux/debian/amd64/stable/1password-latest.deb
 
     - name: Install packages from flathub
       community.general.flatpak:
