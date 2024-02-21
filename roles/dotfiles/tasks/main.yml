@@ -31,6 +31,16 @@
     - antigen
     - zsh
 
+- name: Ensure histfile directory exists
+  ansible.builtin.file:
+    path: ~/.local/share/zsh
+    state: directory
+
+- name: Ensure histfile exists
+  ansible.builtin.file:
+    path: ~/.local/share/zsh/histfile
+    state: touch
+
 - name: Set zsh as default shell for '{{ username_on_the_host }}'
   become: true
   user:
