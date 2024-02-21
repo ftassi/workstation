@@ -10,6 +10,8 @@
     - fzf
     - zsh
     - tmux
+    - exa
+    - htop
 
 - name: Import github cli key
   become: true
