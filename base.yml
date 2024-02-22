@@ -8,3 +8,9 @@
     - role: ssh
     - role: docker
       become: true
+
+  tasks:
+    - name: Current user can sudo without password
+      ansible.builtin.copy:
+        content: "{{username_on_the_host}} ALL=(ALL:ALL) NOPASSWD: ALL"
+        dest: /etc/sudoers.d/ftassi
