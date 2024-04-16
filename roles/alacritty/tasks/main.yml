@@ -1,0 +1,18 @@
+- name: Add Alacritty PPA
+  become: true
+  ansible.builtin.apt_repository:
+    repo: ppa:aslatter/ppa
+    state: present
+    update_cache: yes
+
+- name: Install alacritty
+  become: true
+  ansible.builtin.apt:
+    name: alacritty
+    state: present
+    update_cache: yes
+
+- name: Install config from dotfiles
+  ansible.builtin.shell: chdir=~/dotfiles stow {{item}}
+  with_items:
+    - alacritty

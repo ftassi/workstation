@@ -1,0 +1,33 @@
+---
+
+- hosts: localhost
+  connection: local
+  vars:
+    username_on_the_host: "{{ lookup('env','USER') }}"
+  tasks:
+    - name: Import regolith repository key
+      become: true
+      ansible.builtin.shell: 
+        cmd: wget -qO - https://regolith-desktop.org/regolith.key | gpg --dearmor | tee /usr/share/keyrings/regolith-archive-keyring.gpg > /dev/null
+
+    - name: Add regolith repository.
+      become: true
+      apt_repository:
+        repo: "deb [arch=amd64 signed-by=/usr/share/keyrings/regolith-archive-keyring.gpg]  https://regolith-desktop.org/release-3_1-ubuntu-{{ ansible_distribution_release }}-amd64 {{ ansible_distribution_release }} main"
+        state: present
+        filename: "regolith"
+        update_cache: true
+
+    - name: Install regolith
+      become: true
+      ansible.builtin.apt:
+        pkg:
+        - regolith-desktop
+        - regolith-session-flashback
+        - regolith-session-sway
+        - regolith-look-nord
+        - i3xrocks-focused-window-name
+        - i3xrocks-rofication
+        - i3xrocks-info
+        - i3xrocks-app-launcher
+        - i3xrocks-memory

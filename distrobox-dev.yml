@@ -1,0 +1,20 @@
+---
+- hosts: localhost
+  connection: local
+  vars:
+    username_on_the_host: "{{ lookup('env','USER') }}"
+  roles:
+    - role: onepasswordcli
+      become: true
+    - role: common
+    - role: awscli
+    - role: githubcli
+    - role: podmancompose
+
+  tasks: 
+    - name: Create a symbolic link
+      become: true
+      ansible.builtin.file:
+        src: /usr/bin/distrobox-host-exec
+        dest: /usr/local/bin/podman
+        state: link

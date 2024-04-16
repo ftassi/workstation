@@ -1,0 +1,14 @@
+- name: Install most common packages
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - libssl-dev
+    - git
+    - curl
+    - wget
+    - httpie
+    - tmux
+    - exa
+    - tar
+    - gzip
+    - unzip

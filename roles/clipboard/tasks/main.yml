@@ -1,0 +1,5 @@
+- name: Install xsel to share clipboard with xorg hosts
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - xsel

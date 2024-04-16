@@ -1,0 +1,21 @@
+---
+- name: Install Podman from Ubuntu's official repositories
+  become: true
+  ansible.builtin.apt:
+    name: podman
+    state: latest
+    update_cache: yes
+
+- name: Download Distrobox install script
+  become: true
+  ansible.builtin.get_url:
+    url: https://raw.githubusercontent.com/89luca89/distrobox/main/install
+    dest: /tmp/distrobox-install
+    mode: '0755'
+
+- name: Execute Distrobox install script
+  become: true
+  ansible.builtin.command:
+    cmd: /tmp/distrobox-install
+  args:
+    creates: /usr/local/bin/distrobox-enter

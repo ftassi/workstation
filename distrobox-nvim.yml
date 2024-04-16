@@ -1,13 +1,9 @@
 ---
-
 - hosts: localhost
   connection: local
   vars:
     username_on_the_host: "{{ lookup('env','USER') }}"
-  
   roles:
-    - role: ssh
-    - role: shell
-    - role: alacritty
-    - role: distrobox
-  
+    - role: common
+    - role: ripgrep
+    - role: neovim

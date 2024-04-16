@@ -1,0 +1,23 @@
+---
+- name: Ensure the fonts directory exists
+  ansible.builtin.file:
+    path: "{{ ansible_env.HOME }}/.local/share/fonts"
+    state: directory
+    mode: '0755'
+
+- name: Download and install Nerd Fonts
+  ansible.builtin.get_url:
+    url: "{{ item.url }}"
+    dest: "{{ ansible_env.HOME }}/.local/share/fonts/{{ item.dest }}"
+    mode: '0644'
+  loop:
+    - { url: 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Regular.ttf', dest: 'MesloLGS NF Regular.ttf' }
+    - { url: 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold.ttf', dest: 'MesloLGS NF Bold.ttf' }
+    - { url: 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Italic.ttf', dest: 'MesloLGS NF Italic.ttf' }
+    - { url: 'https://github.com/romkatv/powerlevel10k-media/raw/master/MesloLGS%20NF%20Bold%20Italic.ttf', dest: 'MesloLGS NF Bold Italic.ttf' }
+
+- name: Update font cache
+  ansible.builtin.command:
+    cmd: fc-cache -fv
+  become: true
+  become_user: "{{ ansible_env.USER }}"

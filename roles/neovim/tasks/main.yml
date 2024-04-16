@@ -11,6 +11,11 @@
   ansible.builtin.apt:
     pkg:
     - python3-pip
+    - git
+    - make
+    - unzip
+    - gcc
+    - ripgrep
 
 - name: Install python neovim module
   become: false
@@ -18,20 +23,20 @@
     name: neovim
     extra_args: --user
 
-- name: Ensure ~/opt directory
-  ansible.builtin.file:
-    path: /home/{{ username_on_the_host }}/opt
-    state: directory
+# - name: Ensure ~/opt directory
+#   ansible.builtin.file:
+#     path: /home/{{ username_on_the_host }}/opt
+#     state: directory
 
-- name: Ensure ~/opt/bin directory
-  ansible.builtin.file:
-    path: /home/{{ username_on_the_host }}/opt/bin
-    state: directory
+# - name: Ensure ~/opt/bin directory
+#   ansible.builtin.file:
+#     path: /home/{{ username_on_the_host }}/opt/bin
+#     state: directory
        
 - name: Download and install latest neovim
   ansible.builtin.unarchive:
     src: https://github.com/neovim/neovim/releases/latest/download/nvim-linux64.tar.gz
-    dest: /home/{{ username_on_the_host }}/opt/
+    dest: /usr/local/
     remote_src: yes
     extra_opts:
       - --transform
@@ -39,15 +44,23 @@
 
 - name: Simlink neovim 
   ansible.builtin.file:
-    src: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim
-    dest: /home/{{ username_on_the_host }}/opt/bin/nvim
+    src: /usr/local/nvim/bin/nvim
+    dest: /usr/local/bin/nvim
     state: link
 
 - name: Simlink vim to neovim
   ansible.builtin.file:
-    src: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim
-    dest: /home/{{ username_on_the_host }}/opt/bin/vim
+    src: /usr/local/nvim/bin/nvim
+    dest: /usr/local/bin/vim
     state: link
 
-- name: Install nvim plugin
-  ansible.builtin.shell: /home/{{ username_on_the_host }}/opt/nvim/bin/nvim +PlugInstall +qall
+# TODO: This must be integrated into dotfiles
+- name: Clone kickstart repo
+  ansible.builtin.git:
+    repo: 'git@github.com:ftassi/kickstart.nvim.git'
+    depth: 1
+    dest: ~/.config/nvim
+    update: no
+
+- name: Install LSP tools
+  include_tasks: lsp.yml

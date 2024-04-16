@@ -1,0 +1,38 @@
+- name: Ensure fzf is not installed from repo
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - fzf
+    state: absent
+- name: Install most common packages
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - zsh-antigen
+    - zsh
+    - exa
+
+- name: Install dotfiles
+  ansible.builtin.shell: chdir=~/dotfiles stow {{item}}
+  with_items:
+    - zsh
+    - antigen
+
+- name: Create histfile directory
+  ansible.builtin.file:
+    path: ~/.local/share/zsh
+    state: directory
+
+- name: Create empty histfile
+  file:
+    path: ~/.local/share/zsh/histfile
+    state: touch
+    mode: '0644'
+    force: yes
+
+- name: Set zsh as default shell for '{{ username_on_the_host }}'
+  become: true
+  user:
+    name: '{{ username_on_the_host }}'
+    shell: /usr/bin/zsh
+    append: yes

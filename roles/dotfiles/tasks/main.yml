@@ -1,4 +1,4 @@
-- name: Install git related stuff
+- name: Install packages required to setup dotfiles
   become: true
   ansible.builtin.apt:
     pkg:
@@ -12,29 +12,20 @@
     dest: ~/.git-crypt-key
     mode: '0600'
 
+- name: Check if the dotfiles repository exists
+  ansible.builtin.stat:
+    path: ~/dotfiles/.git
+  register: git_dotfiles
+     
 - name: Clone git dotfiles repo
   ansible.builtin.git:
     repo: 'git@github.com:ftassi/dotfiles.git'
     dest: ~/dotfiles
+    update: no
+  when: not git_dotfiles.stat.exists
 
 - name: Unlock secrects in dotfiles repo
   ansible.builtin.shell: git-crypt unlock ~/.git-crypt-key
   args:
     chdir: ~/dotfiles
-
-- name: Install dotfiles
-  ansible.builtin.shell: chdir=~/dotfiles stow {{item}}
-  with_items:
-    - git
-    - intelephense
-    - nvim
-    - antigen
-    - zsh
-
-- name: Set zsh as default shell for '{{ username_on_the_host }}'
-  become: true
-  user:
-    name: '{{ username_on_the_host }}'
-    shell: /usr/bin/zsh
-    append: yes
-
+  when: not git_dotfiles.stat.exists

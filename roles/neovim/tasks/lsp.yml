@@ -1,0 +1,90 @@
+- name: Install neovim lsp tools
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - python3-pip
+    - php-cli
+    - luarocks
+
+- name: Check if Node.js is already installed
+  command: which node
+  register: node_installed
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+
+- name: Download node installer
+  become: true
+  ansible.builtin.shell:
+    cmd: curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+  args:
+    warn: false 
+  register: node_repo_added
+  when: node_installed.rc != 0
+
+- name: Isntall Node.js
+  become: true
+  ansible.builtin.apt:
+    name: nodejs
+    state: present
+    update_cache: yes
+  when: node_repo_added is changed
+
+- name: Install noevim node.js package globally.
+  become: true
+  community.general.npm:
+    name: neovim
+    global: true
+
+- name: Check if Composer is already installed
+  command: which composer
+  register: composer_installed
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+
+- name: Download and run Composer installer
+  ansible.builtin.shell:
+    cmd: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+  args:
+    warn: false
+  become: true
+  when: composer_installed.rc != 0
+
+- name: Check if Cargo is already installed
+  command: which cargo
+  register: cargo_installed
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+
+- name: Download and run Cargo installer
+  ansible.builtin.shell:
+    cmd: curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y --default-toolchain stable --profile default
+  args:
+    warn: false
+  become: true
+  when: cargo_installed.rc != 0
+
+- name: Check if Go is already installed
+  command: which go
+  register: go_installed
+  ignore_errors: true
+  changed_when: false
+  failed_when: false
+
+- name: Remove existing Go installation
+  ansible.builtin.file:
+    path: /usr/local/go
+    state: absent
+  become: true
+  when: go_installed.rc != 0
+
+- name: Extract Go tarball to /usr/local
+  ansible.builtin.unarchive:
+    src: https://go.dev/dl/go1.22.2.linux-amd64.tar.gz
+    dest: /usr/local
+    remote_src: yes
+  become: true
+  when: go_installed.rc != 0
+

@@ -39,3 +39,11 @@
         src: "{{ temporary_directory_for_onepassword_cli.path }}/op"
         dest: "{{ onepassword_cli_install_directory }}/"
         mode: 0755
+
+- name: Signin to 1password accounts
+  block:
+    - name: signin personal account
+      shell: echo {{ master_password }} | op account add --address catena-tassi.1password.com --email tassi.francesco@gmail.com --secret-key {{ onep_personal_secret }} --shorthand personal --signin
+
+    - name: signin soisy account
+      shell: echo {{ master_password }} | op account add --address my.1password.com --email francesco.tassi@soisy.it --secret-key {{ onep_soisy_secret }} --shorthand soisy --signin

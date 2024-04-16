@@ -1,0 +1,11 @@
+- name: Install some deps
+  become: true
+  ansible.builtin.apt:
+    pkg:
+    - python3.10
+    - python3-pip
+
+- name: Install bottle python package
+  become: true
+  ansible.builtin.pip:
+    name: podman-compose
