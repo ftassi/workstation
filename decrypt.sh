@@ -1,25 +1,28 @@
 #!/usr/bin/env bash
 
-set -e 
-#!/bin/bash
+set -e
 
-if [ "$#" -ne 2 ]; then
-    echo "$0: missing arguments"
-    echo "use: $0 <file_to_decrypt> <encypted_file>"
+if [ "$#" -lt 1 ] || [ "$#" -gt 2 ]; then
+    echo "$0: wrong number of arguments"
+    echo "use: $0 <file_to_decrypt> [<decrypted_file>]"
     exit 1
 fi
 
 # Assegna i parametri a variabili con nomi significativi
 file_to_decrypt="$1"
-decrypted_file="$2"
+decrypted_file="${2:-}"
 
-# Cripta il file
-gpg --output "${decrypted_file}" --decrypt "${file_to_decrypt}"
-
-if [ "$?" -eq 0 ]; then
-    echo "${decrypted_file} decrypted."
+# Decripta il file
+if [ -z "$decrypted_file" ]; then
+    # Nessun file di output specificato, stampa l'output
+    gpg --decrypt "${file_to_decrypt}"
 else
-    echo "Error while decrypting file."
-    exit 1
+    # File di output specificato, salva l'output nel file
+    gpg --output "${decrypted_file}" --decrypt "${file_to_decrypt}"
+    if [ "$?" -eq 0 ]; then
+        echo "${decrypted_file} decrypted."
+    else
+        echo "Error while decrypting file."
+        exit 1
+    fi
 fi
-
