@@ -47,3 +47,8 @@ install_package() {
         echo "$SUDO_PASSWORD" | sudo -S apt-get update -qq && sudo -S apt-get install -y "$PACKAGE"
     fi
 }
+#
+# Funzione per eseguire comandi con sudo utilizzando la password dal file .passwords
+sudo_exec() {
+    echo "$SUDO_PASSWORD" | sudo -S "$@"
+}
