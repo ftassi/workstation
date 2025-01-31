@@ -1,9 +1,8 @@
 #!/bin/bash
 
+PASSWORD_FILE=".passwords"
 # Funzione per leggere la master password da .passwords
 get_master_password() {
-    local PASSWORD_FILE=".passwords"
-
     if [ ! -f "$PASSWORD_FILE" ]; then
         echo -e "\e[31m[ERRORE] Il file .passwords non esiste. Crealo con setup.sh.\e[0m"
         exit 1
@@ -21,8 +20,6 @@ get_master_password() {
 
 # Funzione per leggere la password di sudo da .passwords
 get_sudo_password() {
-    local PASSWORD_FILE=".passwords"
-
     if [ ! -f "$PASSWORD_FILE" ]; then
         echo -e "\e[31m[ERRORE] Il file .passwords non esiste. Crealo con setup.sh.\e[0m"
         exit 1
