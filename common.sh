@@ -1,6 +1,27 @@
 #!/bin/bash
 
 PASSWORD_FILE=".passwords"
+
+# Colorazioni per il logging (assicurarsi che queste variabili siano definite in common.sh oppure definirle qui)
+GREEN="\033[0;32m"
+RED="\033[0;31m"
+RESET="\033[0m"
+
+# Funzioni di logging
+info()    { echo -e "${GREEN}[INFO] $1${RESET}"; }
+error()   { echo -e "${RED}[ERRORE] $1${RESET}"; }
+success() { echo -e "${GREEN}[SUCCESSO] $1${RESET}"; }
+
+# Funzione per eseguire comandi con sudo utilizzando la password memorizzata
+run_sudo() {
+    echo "$SUDO_PASSWORD" | sudo -S "$@"
+}
+
+# Funzione per terminare lo script in caso di errore (se necessario eseguire cleanup)
+cleanup() {
+    error "Si è verificato un errore. Uscita dallo script."
+    exit 1
+}
 # Funzione per leggere la master password da .passwords
 get_master_password() {
     if [ ! -f "$PASSWORD_FILE" ]; then
