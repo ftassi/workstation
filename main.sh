@@ -10,6 +10,7 @@ info "Avvio provisioning completo..."
 MODULES=(
   "modules/ssh.sh"
   "modules/docker.sh"
+  "modules/dotfiles.sh"
 )
 
 for module in "${MODULES[@]}"; do
