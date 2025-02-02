@@ -12,6 +12,7 @@ MODULES=(
   "modules/docker.sh"
   "modules/dotfiles.sh"
   "modules/shell.sh"
+  "modules/distrobox-nvim.sh"
 )
 
 for module in "${MODULES[@]}"; do
