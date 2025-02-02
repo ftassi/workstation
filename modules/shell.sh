@@ -69,7 +69,7 @@ setup_zsh() {
 link_shell_dotfiles() {
     info "Esecuzione del linking dei dotfiles per la shell..."
     # Lista dei gruppi di dotfiles da linkare per la configurazione della shell
-    config_items=("alacritty" "zsh" "antigen", "fzf")
+    config_items=("alacritty" "zsh" "antigen")
     for item in "${config_items[@]}"; do
         if [ -d "$HOME/dotfiles/$item" ]; then
             info "Linking della configurazione '$item'..."
