@@ -2,7 +2,7 @@
 set -euo pipefail
 
 # Inclusione delle funzioni comuni
-source "$(dirname "$0")/common.sh"
+source "$(dirname "$0")/../common.sh"
 
 trap cleanup ERR
 
