@@ -14,9 +14,6 @@ info "Inizio provisioning dotfiles..."
 DOTFILES_REPO="git@github.com:ftassi/dotfiles.git"
 DOTFILES_BRANCH="main"
 
-# Elenco dei gruppi di dotfiles da linkare (modifica l'elenco in base alle tue necessità)
-DOTFILES_LIST=("git" "nvim" "zsh" "intelephense")
-
 # Directory di destinazione per il clone del repository
 TARGET_DIR="$HOME/dotfiles"
 
@@ -72,6 +69,9 @@ cd - >/dev/null
 #####################
 # Installazione dei dotfiles tramite stow
 #####################
+
+# Elenco dei gruppi di dotfiles da linkare (modifica l'elenco in base alle tue necessità)
+DOTFILES_LIST=("git" "intelephense")
 
 info "Installazione dei dotfiles tramite stow..."
 for package in "${DOTFILES_LIST[@]}"; do

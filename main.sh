@@ -11,6 +11,7 @@ MODULES=(
   "modules/ssh.sh"
   "modules/docker.sh"
   "modules/dotfiles.sh"
+  "modules/shell.sh"
 )
 
 for module in "${MODULES[@]}"; do
