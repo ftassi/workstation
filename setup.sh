@@ -1,4 +1,4 @@
-#!/bin/bash
+#/bin/bash
 
 set -e
 
@@ -7,26 +7,28 @@ source "$(dirname "$0")/common.sh"
 
 # Se il file delle password esiste, informiamo l'utente
 if [ -f "$PASSWORD_FILE" ]; then
-    echo -e "${GREEN}[INFO] Il file .passwords esiste già. Skipping.${RESET}"
+    info "Il file .passwords esiste già. Skipping."
 else
-    echo -e "${GREEN}[INFO] Creazione del file .passwords...${RESET}"
+    info "Creazione del file .passwords..."
 
-    echo -e "${GREEN}[INPUT] Inserisci la master password:${RESET}"
+    info "[INPUT] Inserisci la master password:"
     read -s MASTER_PASSWORD
+    echo ""
 
-    echo -e "${GREEN}[INPUT] Inserisci la password di sudo:${RESET}"
+    info "[INPUT] Inserisci la password di sudo:"
     read -s SUDO_PASSWORD
+    echo ""
 
     echo "MASTER_PASSWORD=$MASTER_PASSWORD" > "$PASSWORD_FILE"
     echo "SUDO_PASSWORD=$SUDO_PASSWORD" >> "$PASSWORD_FILE"
 
     chmod 600 "$PASSWORD_FILE"
     
-    echo -e "${GREEN}[INFO] File .passwords creato con successo.${RESET}"
+    success "File .passwords creato con successo."
 fi
 
-echo -e "${GREEN}[INFO] Inizializzazione del provisioning...${RESET}"
-echo -e "${GREEN}[INFO] Installazione dei pacchetti base...${RESET}"
+info "Inizializzazione del provisioning..."
+info "Installazione dei pacchetti base..."
 
 install_package "git"
 install_package "gpg"
@@ -34,7 +36,7 @@ install_package "git-crypt"
 
 # Controllo che il repository sia stato clonato correttamente
 if [ ! -f "git-crypt.key.gpg" ]; then
-    echo -e "${RED}[ERRORE] Il file git-crypt.key.gpg non esiste. Assicurati di aver clonato il repository corretto.${RESET}"
+    error "Il file git-crypt.key.gpg non esiste. Assicurati di aver clonato il repository corretto."
     exit 1
 fi
 
@@ -50,7 +52,7 @@ git-crypt unlock git-crypt.key
 # Rimuove la chiave temporanea
 rm git-crypt.key
 
-echo -e "${GREEN}[INFO] Secrets sbloccati con successo.${RESET}"
+success "Secrets sbloccati con successo."
 
 # Verifica lo stato di git-crypt
 git-crypt status
