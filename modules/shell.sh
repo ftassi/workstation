@@ -25,6 +25,9 @@ install_distrobox() {
         info "Installazione di podman (richiesto da distrobox)..."
         sudo apt-get install -y podman
         success "Distrobox installato."
+        info "Installazione di xsel per la gestione degli appunti..."
+        sudo apt-get install -y xsel
+        success "xsel installato."
     else
         info "Distrobox già installato."
     fi
