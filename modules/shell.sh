@@ -28,6 +28,8 @@ install_distrobox() {
         info "Installazione di xsel per la gestione degli appunti..."
         sudo apt-get install -y xsel
         success "xsel installato."
+        info "Installazione di flatpak necessario ad eseguire comandi host da distrobox..."
+        sudo apt-get install -y flatpak
     else
         info "Distrobox già installato."
     fi
