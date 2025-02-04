@@ -15,10 +15,10 @@ NVIM_TARBALL_URL="https://github.com/neovim/neovim/releases/download/v${NVIM_VER
 # La directory dei dotfiles per neovim (già clonata dal modulo dotfiles)
 DOTFILES_NVIM="$HOME/dotfiles/nvim"
 
-# Directory in cui installare i file all'interno della distrobox
-INSTALL_DIR="$HOME/opt/distroboxes/${CONTAINER_NAME}"
-# Directory per i symlink dei binari, visibile all'host
-EXPORT_BIN_DIR="$HOME/.local/distroboxes/${CONTAINER_NAME}/bin"
+# Directory in cui installare i file all'interno della distrobox (namespace dedicato)
+INSTALL_DIR="$HOME/distroboxes/${CONTAINER_NAME}"
+# Directory per i symlink dei binari, visibile all'host (standard: $HOME/.local/bin)
+EXPORT_BIN_DIR="$HOME/.local/bin"
 
 info "Inizio provisioning della distrobox nvim..."
 
@@ -60,18 +60,19 @@ install_neovim_main() {
     # Installazione di pip per Python3 (se non è già presente)
     info "[PYTHON] Verifica/installazione di python..."
     if ! enter command -v pip3 &>/dev/null; then
-        enter sudo apt-get install -y python3-neovim python3-pip python3.10 python3.10-venv python3.10-dev python3-pip
+        enter sudo apt-get install -y python3-neovim python3-pip python3.10 python3.10-venv python3.10-dev
         info "[PYTHON] python installato."
     else
         info "[PYTHON] python è già presente."
     fi
 
-    $NVN_DIR="$HOME/opt/distroboxes/nvim/.nvm"
+    # Imposta la directory per nvm all'interno dell'INSTALL_DIR
+    NVM_DIR="$INSTALL_DIR/.nvm"
     # Installazione di nvm in una directory dedicata alla distrobox nvim
     info "[NODE] Installazione di nvm nella directory dedicata alla distrobox..."
-    enter bash -c "mkdir -p \"$NVN_DIR\""
-    enter bash -c 'export NVM_DIR=\"$NVM_DIR\" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
-    success "[NODE] nvm installato in $NVN_DIR."
+    enter bash -c "mkdir -p \"$NVM_DIR\""
+    enter bash -c "export NVM_DIR=\"$NVM_DIR\" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash"
+    success "[NODE] nvm installato in $NVM_DIR."
 
     # Usando nvm installiamo Node.js versione 22 e impostiamo la versione in uso
     info "[NODE] Installazione di Node.js versione 22 tramite nvm..."
@@ -103,12 +104,10 @@ install_neovim_main() {
 
     info "[ALTERNATIVES] Configurazione di Neovim come alternativa a vim..."
     # Registra Neovim come alternativa per 'vim' con una priorità (ad esempio, 60)
-    enter sudo update-alternatives --install /usr/bin/vim vim "$HOME/.local/distroboxes/nvim/bin/nvim" 60
+    enter sudo update-alternatives --install /usr/bin/vim vim "$INSTALL_DIR/bin/nvim" 60
     # Imposta Neovim come default per 'vim'
-    enter sudo update-alternatives --set vim "$HOME/.local/distroboxes/nvim/bin/nvim"
+    enter sudo update-alternatives --set vim "$INSTALL_DIR/bin/nvim"
     success "[ALTERNATIVES] Neovim configurato come default per 'vim'."
-
-
 }
 
 ##############################
@@ -116,8 +115,7 @@ install_neovim_main() {
 ##############################
 install_neovim_lsp() {
     info "[NEOVIM LSP] Configurazione dei tool LSP..."
-    # Rimuoviamo riferimenti a Go; installiamo strumenti per Rust.
-    
+
     # Installa rust-analyzer se non presente
     if ! enter command -v rust-analyzer &>/dev/null; then
         info "[NEOVIM LSP] rust-analyzer non trovato: installazione..."
@@ -127,14 +125,22 @@ install_neovim_lsp() {
         info "[NEOVIM LSP] rust-analyzer è già presente."
     fi
 
-    # Installa cargo se non presente, tramite rustup
-    if ! enter command -v cargo &>/dev/null; then
-        info "[NEOVIM LSP] cargo non trovato: installazione tramite rustup..."
-        enter bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y"
-        success "[NEOVIM LSP] cargo (rustup) installato."
+    # Imposta le directory isolate per Cargo e Rustup all'interno del namespace della distrobox
+    local cargo_home="$INSTALL_DIR/cargo"
+    local rustup_home="$INSTALL_DIR/rustup"
+
+    # Installa cargo (e Rustup) in ambiente isolato se non sono presenti
+    if ! enter bash -c "export CARGO_HOME=\"$cargo_home\"; export RUSTUP_HOME=\"$rustup_home\"; command -v cargo" &>/dev/null; then
+        info "[NEOVIM LSP] cargo non trovato: installazione tramite rustup in ambiente isolato..."
+        enter bash -c "curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | env CARGO_HOME=\"$cargo_home\" RUSTUP_HOME=\"$rustup_home\" sh -s -- -y"
+        success "[NEOVIM LSP] cargo (rustup) installato in ambiente isolato."
     else
         info "[NEOVIM LSP] cargo è già presente."
     fi
+
+    # (Opzionale) Aggiornamento del PATH all'interno della distrobox, in modo che venga incluso il binario di cargo
+    # Ad esempio, potresti eseguire:
+    # enter bash -c "echo 'export PATH=\"$cargo_home/bin:\$PATH\"' >> ~/.profile"
 }
 
 install_luarocks() {
@@ -165,12 +171,11 @@ install_neovim_extra_deps() {
 }
 
 ##############################
-# Installazione dei plugin Neovim tramite Mason
+# Installazione dei plugin Neovim tramite Plug
 ##############################
 install_neovim_plugins() {
-    #
     # Verifica che la directory dei dotfiles per neovim sia disponibile nella distrobox
-    if ! enter test -d "/home/${USER}/dotfiles/nvim"; then
+    if ! enter test -d "$DOTFILES_NVIM"; then
         error "[NEOVIM PLUGINS] La directory dei dotfiles per neovim non è presente nella distrobox."
         error "[NEOVIM PLUGINS] Assicurati di aver clonato i dotfiles per neovim nella distrobox."
         exit 1
@@ -178,11 +183,11 @@ install_neovim_plugins() {
         success "[NEOVIM MAIN] La directory dei dotfiles per neovim è disponibile."
     fi
 
-    info "[NEOVIM PLUGINS] Installa plugin tramite Plug..."
+    info "[NEOVIM PLUGINS] Installazione dei plugin tramite Plug..."
     enter nvim --headless +PlugClean! +qa
     enter nvim --headless +PlugInstall! +qa
-    info "[NEOVIM PLUGINS] Installazione dei plugin e degli LSP tramite Mason..."
-    # Esegue Neovim in modalità headless per avviare Mason e installare tutti i plugin e LSP configurati
+    info "[NEOVIM PLUGINS] Installazione dei plugin e degli LSP tramite Mason in corso..."
+    # Esegue Neovim in modalità headless per avviare Mason e installare i plugin/LSP configurati
 }
 
 ##############################
@@ -190,8 +195,8 @@ install_neovim_plugins() {
 ##############################
 export_nvim() {
     info "Esportazione di Neovim dalla distrobox per esecuzione dall'host..."
-    # Esporta il binario installato in INSTALL_DIR/bin/nvim verso EXPORT_BIN_DIR
-    enter distrobox-export --bin "${HOME}/.local/bin/nvim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
+    # Esporta il binario installato in INSTALL_DIR/bin/nvim verso EXPORT_BIN_DIR ($HOME/.local/bin)
+    enter distrobox-export --bin "$INSTALL_DIR/bin/nvim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
     success "Neovim esportato correttamente. I symlink sono stati creati in $EXPORT_BIN_DIR."
 }
 
