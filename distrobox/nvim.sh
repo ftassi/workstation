@@ -167,8 +167,16 @@ export_nvim() {
     # Se desideri esportare il binario dalla distrobox all'host, puoi mantenere questa funzione.
     # Attualmente questa funzione non è necessaria se il provisioning è completamente interno.
     distrobox-export --bin "$INSTALL_DIR/bin/nvim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
-    distrobox-export --bin "$INSTALL_DIR/bin/vim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
+    distrobox-export --bin "/usr/bin/vim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
     success "Neovim esportato correttamente. I symlink sono stati creati in $EXPORT_BIN_DIR."
+}
+
+##############################
+# Docker all'interno della distrobox
+##############################
+allow_host_docker_into_distrobox() {
+    info "[DOCKER] Rendo disponibile docker dell'host all'interno della distrobox..."
+    sudo ln -s /usr/bin/distrobox-host-exec /usr/local/bin/docker
 }
 
 ##############################
@@ -180,6 +188,7 @@ install_neovim_main
 install_neovim_lsp
 install_neovim_extra_deps
 install_neovim_plugins
+allow_host_docker_into_distrobox
 export_nvim 
 
 success "Provisioning di Neovim nella distrobox completato con successo."
