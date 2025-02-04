@@ -66,25 +66,28 @@ install_neovim_main() {
         info "[PYTHON] python è già presente."
     fi
 
+    $NVN_DIR="$HOME/opt/distroboxes/nvim/.nvm"
     # Installazione di nvm in una directory dedicata alla distrobox nvim
     info "[NODE] Installazione di nvm nella directory dedicata alla distrobox..."
-    enter bash -c 'export NVM_DIR="$HOME/opt/distroboxes/nvim/.nvm" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
-    success "[NODE] nvm installato in $HOME/opt/distroboxes/nvim/.nvm."
+    enter bash -c "mkdir -p \"$NVN_DIR\""
+    enter bash -c 'export NVM_DIR=\"$NVM_DIR\" && curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.1/install.sh | bash'
+    success "[NODE] nvm installato in $NVN_DIR."
 
     # Usando nvm installiamo Node.js versione 22 e impostiamo la versione in uso
     info "[NODE] Installazione di Node.js versione 22 tramite nvm..."
-    enter bash -c "mkdir -p \"$HOME/opt/distroboxes/nvim/.nvm\""
-    enter bash -c "export NVM_DIR=\"$HOME/opt/distroboxes/nvim/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" && nvm install 22 && nvm use 22"
-    info "[NODE] Verifica delle versioni di Node.js e npm..."
-    NODE_VERSION=$(enter bash -c "export NVM_DIR=\"$HOME/opt/distroboxes/nvim/.nvm\" && . \"\$NVM_DIR/nvm.sh\" && node --version")
-    NPM_VERSION=$(enter bash -c "export NVM_DIR=\"$HOME/opt/distroboxes/nvim/.nvm\" && . \"\$NVM_DIR/nvm.sh\" && npm --version")
-    info "[NODE] Node.js version: $NODE_VERSION, npm version: $NPM_VERSION"
+    enter bash -c "export NVM_DIR=\"$NVM_DIR\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" && nvm install 22 && nvm use 22"
+
     info "[NODE] Impostazione di Node.js versione 22 come default..."
-    enter bash -c "export NVM_DIR=\"$HOME/opt/distroboxes/nvim/.nvm\" && . \"\$NVM_DIR/nvm.sh\" && nvm alias default 22"
+    enter bash -c "export NVM_DIR=\"$NVM_DIR\" && . \"\$NVM_DIR/nvm.sh\" && nvm alias default 22"
+
+    info "[NODE] Verifica delle versioni di Node.js e npm..."
+    NODE_VERSION=$(enter bash -c "export NVM_DIR=\"$NVM_DIR\" && . \"\$NVM_DIR/nvm.sh\" && node --version")
+    NPM_VERSION=$(enter bash -c "export NVM_DIR=\"$NVM_DIR\" && . \"\$NVM_DIR/nvm.sh\" && npm --version")
+    info "[NODE] Node.js version: $NODE_VERSION, npm version: $NPM_VERSION"
 
     info "[NODE] Verifica/installazione del pacchetto 'neovim' tramite npm..."
-    if ! enter bash -c "export NVM_DIR=\"$HOME/opt/distroboxes/nvim/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" && npm list -g neovim >/dev/null 2>&1"; then
-        enter bash -c "export NVM_DIR=\"$HOME/opt/distroboxes/nvim/.nvm\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" && npm install -g neovim"
+    if ! enter bash -c "export NVM_DIR=\"$NVM_DIR\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" && npm list -g neovim >/dev/null 2>&1"; then
+        enter bash -c "export NVM_DIR=\"$NVM_DIR\" && [ -s \"\$NVM_DIR/nvm.sh\" ] && . \"\$NVM_DIR/nvm.sh\" && npm install -g neovim"
         info "[NODE] Pacchetto 'neovim' installato globalmente."
     else
         info "[NODE] Pacchetto 'neovim' già presente globalmente."
@@ -92,18 +95,10 @@ install_neovim_main() {
 
     if ! enter command -v nvim &>/dev/null; then
         info "[NEOVIM MAIN] Neovim non trovato: installazione di Neovim ${NVIM_VERSION}..."
-        enter bash -c "curl -fsSL '${NVIM_TARBALL_URL}' -o /tmp/nvim.tar.gz && sudo tar --no-same-owner -xzf /tmp/nvim.tar.gz -C \"$INSTALL_DIR\" --strip-components=1 && rm /tmp/nvim.tar.gz"
+        enter bash -c "curl -fsSL \"$NVIM_TARBALL_URL\" -o /tmp/nvim.tar.gz && sudo tar --no-same-owner -xzf /tmp/nvim.tar.gz -C \"$INSTALL_DIR\" --strip-components=1 && rm /tmp/nvim.tar.gz"
         success "[NEOVIM MAIN] Neovim ${NVIM_VERSION} installato in $INSTALL_DIR."
     else
         info "[NEOVIM MAIN] Neovim è già installato."
-    fi
-
-    # Verifica che la directory dei dotfiles per neovim sia disponibile nella distrobox
-    if ! enter test -d "/home/${USER}/dotfiles/nvim"; then
-        error "[NEOVIM MAIN] La directory dei dotfiles per neovim non è presente nella distrobox."
-        exit 1
-    else
-        success "[NEOVIM MAIN] La directory dei dotfiles per neovim è disponibile."
     fi
 
     info "[ALTERNATIVES] Configurazione di Neovim come alternativa a vim..."
@@ -112,6 +107,8 @@ install_neovim_main() {
     # Imposta Neovim come default per 'vim'
     enter sudo update-alternatives --set vim "$HOME/.local/distroboxes/nvim/bin/nvim"
     success "[ALTERNATIVES] Neovim configurato come default per 'vim'."
+
+
 }
 
 ##############################
@@ -138,8 +135,6 @@ install_neovim_lsp() {
     else
         info "[NEOVIM LSP] cargo è già presente."
     fi
-
-    # Altre dipendenze per il supporto LSP per Rust possono essere aggiunte qui.
 }
 
 install_luarocks() {
@@ -173,10 +168,21 @@ install_neovim_extra_deps() {
 # Installazione dei plugin Neovim tramite Mason
 ##############################
 install_neovim_plugins() {
+    #
+    # Verifica che la directory dei dotfiles per neovim sia disponibile nella distrobox
+    if ! enter test -d "/home/${USER}/dotfiles/nvim"; then
+        error "[NEOVIM PLUGINS] La directory dei dotfiles per neovim non è presente nella distrobox."
+        error "[NEOVIM PLUGINS] Assicurati di aver clonato i dotfiles per neovim nella distrobox."
+        exit 1
+    else
+        success "[NEOVIM MAIN] La directory dei dotfiles per neovim è disponibile."
+    fi
+
+    info "[NEOVIM PLUGINS] Installa plugin tramite Plug..."
+    enter nvim --headless +PlugClean! +qa
+    enter nvim --headless +PlugInstall! +qa
     info "[NEOVIM PLUGINS] Installazione dei plugin e degli LSP tramite Mason..."
     # Esegue Neovim in modalità headless per avviare Mason e installare tutti i plugin e LSP configurati
-    enter nvim --headless +MasonInstallAll +qa
-    success "[NEOVIM PLUGINS] Plugin e LSP installati tramite Mason."
 }
 
 ##############################
@@ -185,7 +191,7 @@ install_neovim_plugins() {
 export_nvim() {
     info "Esportazione di Neovim dalla distrobox per esecuzione dall'host..."
     # Esporta il binario installato in INSTALL_DIR/bin/nvim verso EXPORT_BIN_DIR
-    enter distrobox-export --bin "$INSTALL_DIR/bin/nvim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
+    enter distrobox-export --bin "${HOME}/.local/bin/nvim" --export-path "$EXPORT_BIN_DIR" --extra-flags "-p"
     success "Neovim esportato correttamente. I symlink sono stati creati in $EXPORT_BIN_DIR."
 }
 
@@ -198,6 +204,6 @@ install_neovim_main
 install_neovim_lsp
 install_neovim_extra_deps
 install_neovim_plugins
-export_nvim
+# export_nvim
 
 success "Provisioning della distrobox nvim completato con successo."
