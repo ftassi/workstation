@@ -15,17 +15,36 @@ else
     read -s MASTER_PASSWORD
     echo ""
 
-    info "[INPUT] Inserisci la password di sudo:"
-    read -s SUDO_PASSWORD
-    echo ""
-
     echo "MASTER_PASSWORD=$MASTER_PASSWORD" > "$PASSWORD_FILE"
-    echo "SUDO_PASSWORD=$SUDO_PASSWORD" >> "$PASSWORD_FILE"
 
     chmod 600 "$PASSWORD_FILE"
     
     success "File .passwords creato con successo."
 fi
+
+# Ottieni il nome dell'utente corrente (quello che vuoi abilitare)
+CURRENT_USER=$(logname 2>/dev/null || echo "$SUDO_USER")
+
+info "Aggiunta dell'utente $CURRENT_USER ai sudoers..."
+info "Dopo il provisioning elimina il file /etc/sudoers.d/zz_provisioning_${CURRENT_USER} per rimuovere i privilegi."
+
+# Verifica che l'utente sia stato trovato
+if [ -z "$CURRENT_USER" ]; then
+    echo "Impossibile determinare l'utente corrente."
+    exit 1
+fi
+
+# Scegli un nome per il file in modo che venga letto per ultimo (ordine lessicografico)
+SUDOERS_FILE="/etc/sudoers.d/zz_provisioning_${CURRENT_USER}"
+
+# Crea il file con la regola per l'utente corrente
+echo "${CURRENT_USER} ALL=(ALL) NOPASSWD: ALL" > "$SUDOERS_FILE"
+
+# Imposta i permessi corretti (0440)
+chmod 0440 "$SUDOERS_FILE"
+
+# Verifica la sintassi del file
+visudo -cf "$SUDOERS_FILE" && echo "File sudoers creato correttamente in $SUDOERS_FILE" || echo "Errore di sintassi in $SUDOERS_FILE"
 
 info "Inizializzazione del provisioning..."
 info "Installazione dei pacchetti base..."
