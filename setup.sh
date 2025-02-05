@@ -5,6 +5,9 @@ set -e
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/common.sh"
 
+# Ottieni il nome dell'utente corrente (quello che vuoi abilitare)
+CURRENT_USER=$(logname 2>/dev/null || echo "$SUDO_USER")
+
 # Se il file delle password esiste, informiamo l'utente
 if [ -f "$PASSWORD_FILE" ]; then
     info "Il file .passwords esiste già. Skipping."
@@ -15,15 +18,13 @@ else
     read -s MASTER_PASSWORD
     echo ""
 
-    echo "MASTER_PASSWORD=$MASTER_PASSWORD" > "$PASSWORD_FILE"
+    sudo -u "$SUDO_USER" echo "MASTER_PASSWORD=$MASTER_PASSWORD" > "$PASSWORD_FILE"
 
     chmod 600 "$PASSWORD_FILE"
     
     success "File .passwords creato con successo."
 fi
 
-# Ottieni il nome dell'utente corrente (quello che vuoi abilitare)
-CURRENT_USER=$(logname 2>/dev/null || echo "$SUDO_USER")
 
 info "Aggiunta dell'utente $CURRENT_USER ai sudoers..."
 info "Dopo il provisioning elimina il file /etc/sudoers.d/zz_provisioning_${CURRENT_USER} per rimuovere i privilegi."
@@ -66,7 +67,7 @@ MASTER_PASSWORD=$(get_master_password)
 gpg --batch --yes --passphrase "$MASTER_PASSWORD" --output git-crypt.key --decrypt git-crypt.key.gpg
 
 # Sblocca i secrets criptati con git-crypt
-git-crypt unlock git-crypt.key
+sudo -u "$SUDO_USER" git-crypt unlock git-crypt.key
 
 # Rimuove la chiave temporanea
 rm git-crypt.key
@@ -74,4 +75,4 @@ rm git-crypt.key
 success "Secrets sbloccati con successo."
 
 # Verifica lo stato di git-crypt
-git-crypt status
+sudo -u "$SUDO_USER" git-crypt status
