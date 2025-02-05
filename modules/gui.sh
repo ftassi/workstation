@@ -6,9 +6,6 @@ source "$(dirname "$0")/../common.sh"
 
 info "Installazione degli applicativi GUI..."
 
-# Lettura della password sudo
-SUDO_PASSWORD=$(get_sudo_password)
- 
 # Aggiornamento della lista dei pacchetti e installazione dei tool necessari
 info "Aggiornamento del sistema e installazione delle dipendenze..."
 sudo apt update
