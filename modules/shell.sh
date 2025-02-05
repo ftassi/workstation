@@ -53,6 +53,14 @@ install_cli_tools() {
     success "Pacchetti CLI moderni installati."
 }
 
+
+install_alacritty() {
+    sudo add-apt-repository ppa:aslatter/ppa
+    sudo apt-get update
+
+    sudo apt-get install -y alacritty
+}
+
 setup_zsh() {
     info "Configurazione di zsh..."
     HIST_DIR="$HOME/.local/share/zsh"
@@ -93,6 +101,7 @@ link_shell_dotfiles() {
 
 install_distrobox
 install_cli_tools
+install_alacritty
 setup_zsh
 link_shell_dotfiles
 
