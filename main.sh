@@ -12,7 +12,6 @@ MODULES=(
   "modules/docker.sh"
   "modules/dotfiles.sh"
   "modules/shell.sh"
-  "modules/distrobox-nvim.sh"
 )
 
 for module in "${MODULES[@]}"; do
@@ -24,5 +23,13 @@ for module in "${MODULES[@]}"; do
       exit 1
   fi
 done
+
+info "Creo la distrobox nvim..."
+bash "modules/distrobox.sh" "nvim" 
+info "Distrobox nvim creata con successo. Ricordarti di eseguire il provisioning con distrobox/nvim.sh"
+
+info "Creo la distrobox dev..."
+bash "modules/distrobox.sh" "dev" 
+info "Distrobox dev creata con successo. Ricordarti di eseguire il provisioning con distrobox/dev.sh"
 
 success "Provisioning completato con successo!"
