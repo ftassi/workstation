@@ -33,9 +33,9 @@ install_distrobox() {
 
 install_cli_tools() {
     info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
-    sudo add-apt-repository -y ppa:aslatter/ppa
-    sudo apt-get update
-
+    # sudo add-apt-repository -y ppa:aslatter/ppa
+    # sudo apt-get update
+    #
     # Pacchetti fondamentali per avere una shell moderna
     sudo apt-get install -y zsh zsh-antigen alacritty
 
