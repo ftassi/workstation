@@ -12,6 +12,9 @@ MODULES=(
   "modules/docker.sh"
   "modules/dotfiles.sh"
   "modules/shell.sh"
+  "modules/distrotbox.sh"
+  "modules/regolith.sh"
+  "modules/gui.sh"
 )
 
 for module in "${MODULES[@]}"; do
