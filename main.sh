@@ -12,7 +12,6 @@ MODULES=(
   "modules/docker.sh"
   "modules/dotfiles.sh"
   "modules/shell.sh"
-  "modules/distrotbox.sh"
   "modules/regolith.sh"
   "modules/gui.sh"
 )
@@ -27,12 +26,20 @@ for module in "${MODULES[@]}"; do
   fi
 done
 
-info "Creo la distrobox nvim..."
-bash "modules/distrobox.sh" "nvim" 
-info "Distrobox nvim creata con successo. Ricordarti di eseguire il provisioning con distrobox/nvim.sh"
+DISTROBOXES=(
+  "nvim"
+  "dev"
+)
 
-info "Creo la distrobox dev..."
-bash "modules/distrobox.sh" "dev" 
-info "Distrobox dev creata con successo. Ricordarti di eseguire il provisioning con distrobox/dev.sh"
+for distrobox in "${DISTROBOXES[@]}"; do
+  if [ -x "modules/distrobox.sh" ]; then
+      info "Creazione di distrobox $(basename "$distrobox")..."
+      bash "modules/distrobox.sh" "$distrobox"
+      info "Distrobox $(basename "$distrobox") creata con successo. Ricordarti di eseguire il provisioning con distrobox/$(basename "$distrobox").sh"
+  else
+      error "Modulo distrobox non eseguibile o non trovato."
+      exit 1
+  fi
+done
 
 success "Provisioning completato con successo!"
