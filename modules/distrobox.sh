@@ -14,7 +14,7 @@ fi
 trap cleanup ERR
 
 info "Creazione di una distrobox basata su ubuntu:22.04 per neovim..."
-$HOME/.local/bin/distrobox-create --name "$1" --image "ubuntu:22.04"
+$HOME/.local/bin/distrobox-create --yes --name "$1" --image "ubuntu:22.04"
 
 info "Il provisioning della distrobox deve essere completato manualmente."
 info "Per connettersi alla distrobox, eseguire il comando:"
