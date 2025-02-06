@@ -37,7 +37,7 @@ install_distrobox() {
 
 install_cli_tools() {
     info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
-    sudo add-apt-repository ppa:aslatter/ppa
+    sudo add-apt-repository -y ppa:aslatter/ppa
     sudo apt-get update
 
     # Pacchetti fondamentali per avere una shell moderna
