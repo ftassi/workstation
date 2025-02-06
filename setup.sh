@@ -32,7 +32,7 @@ visudo -cf "$SUDOERS_FILE" && echo "File sudoers creato correttamente in $SUDOER
 info "Inizializzazione del provisioning..."
 info "Installazione dei pacchetti base..."
 
-sudo apt-get update -qq && sudo apt-get install -y git gpg git-crypt
+sudo apt-get update -qq && sudo apt-get install -y git tig gpg git-crypt
 
 # Controllo che il repository sia stato clonato correttamente
 if [ ! -f "git-crypt.key.gpg" ]; then

@@ -28,6 +28,7 @@ install_common() {
     sudo apt-get install -y \
         libssl-dev /
         git /
+        tig /
         curl /
         wget /
         httpie /
