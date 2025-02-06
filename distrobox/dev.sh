@@ -4,7 +4,7 @@ set -euo pipefail
 # Inclusione delle funzioni comuni (es. info, error, success)
 # Assicurati che il file common.sh sia presente nella directory relativa corretta
 source "$(dirname "$0")/../common.sh"
-source "$(dirname "$0")/shell.sh"
+source "$(dirname "$0")/../modules/shell.sh"
 
 
 ##############################
