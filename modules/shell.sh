@@ -25,6 +25,7 @@ install_distrobox() {
     if ! command -v distrobox &>/dev/null; then
         info "Distrobox non trovato, installo..."
         curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$HOME/.local"
+        export PATH="$HOME/.local/bin:$PATH"
         success "Distrobox installato."
     else
         info "Distrobox già installato."
