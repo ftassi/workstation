@@ -19,17 +19,13 @@ fi
 #####################
 
 install_distrobox() {
+    info "Installo dipendenze per distrobox..."
+    sudo apt-get update -qq && sudo apt-get install -y curl podman xsel flatpak
+
     if ! command -v distrobox &>/dev/null; then
         info "Distrobox non trovato, installo..."
-        curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$HOME/opt"
-        info "Installazione di podman (richiesto da distrobox)..."
-        sudo apt-get install -y podman
+        curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$HOME/.local"
         success "Distrobox installato."
-        info "Installazione di xsel per la gestione degli appunti..."
-        sudo apt-get install -y xsel
-        success "xsel installato."
-        info "Installazione di flatpak necessario ad eseguire comandi host da distrobox..."
-        sudo apt-get install -y flatpak
     else
         info "Distrobox già installato."
     fi
