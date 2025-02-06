@@ -45,10 +45,11 @@ install_cli_tools() {
 
     # Utility moderne che sostituiscono strumenti tradizionali
     sudo apt-get install -y eza bat fd-find ripgrep
-    sudo apt-get install -y du-dust duf bpytop
+    sudo apt-get install -y duf bpytop
     sudo apt-get install -y zoxide git-delta hyperfine
-
     sudo apt-get install -y direnv
+
+    sudo snap install dust
                                     
 
     success "Pacchetti CLI moderni installati."
