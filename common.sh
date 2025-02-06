@@ -35,14 +35,3 @@ get_master_password() {
     echo "$MASTER_PASSWORD"
 }
 
-# Funzione per installare pacchetti con apt in modo idempotente
-install_package() {
-    local PACKAGE=$1
-
-    if dpkg -s "$PACKAGE" &> /dev/null; then
-        echo -e "\e[34m[INFO] Il pacchetto $PACKAGE è già installato. Skipping.\e[0m"
-    else
-        echo -e "\e[32m[INFO] Installazione di $PACKAGE...\e[0m"
-        apt-get update -qq && apt-get install -y "$PACKAGE"
-    fi
-}
