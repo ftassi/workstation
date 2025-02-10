@@ -110,3 +110,6 @@ install_githubcli
 install_rust
 allow_host_docker_into_distrobox
 
+info "Switching to zsh shell"
+chsh -s /usr/bin/zsh
+

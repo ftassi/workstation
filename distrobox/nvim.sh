@@ -193,4 +193,7 @@ install_neovim_plugins
 allow_host_docker_into_distrobox
 export_nvim 
 
+info "Switching to zsh shell"
+chsh -s /usr/bin/zsh
+
 success "Provisioning di Neovim nella distrobox completato con successo."
