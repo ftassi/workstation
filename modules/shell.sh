@@ -26,6 +26,9 @@ install_distrobox() {
         info "Distrobox non trovato, installo..."
         curl -s https://raw.githubusercontent.com/89luca89/distrobox/main/install | sh -s -- --prefix "$HOME/.local"
         export PATH="$HOME/.local/bin:$PATH"
+
+        info "Installazione di podman (richiesto da distrobox)..."
+        sudo apt-get install -y podman
         success "Distrobox installato."
     else
         info "Distrobox già installato."
