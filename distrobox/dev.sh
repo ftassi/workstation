@@ -4,13 +4,12 @@ set -euo pipefail
 # Inclusione delle funzioni comuni (es. info, error, success)
 # Assicurati che il file common.sh sia presente nella directory relativa corretta
 source "$(dirname "$0")/../common.sh"
-source "$(dirname "$0")/../modules/shell.sh"
 
 
 ##############################
 # Configurazione di base
 ##############################
-CONTAINER_NAME="devbox"
+CONTAINER_NAME="dev"
 
 # Directory in cui installare i file (namespace dedicato all'interno della distrobox)
 INSTALL_DIR="$HOME/distroboxes/${CONTAINER_NAME}"
@@ -29,6 +28,7 @@ install_common() {
         libssl-dev /
         git /
         tig /
+        jq /
         curl /
         wget /
         httpie /
@@ -38,6 +38,19 @@ install_common() {
         gzip /
         unzip
     success "[COMMON] Operazioni completate."
+
+    info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
+    sudo apt-get update -qq
+
+    # Utility moderne che sostituiscono strumenti tradizionali
+    # Questa é una duplicazione da shell, da rimuovere
+    sudo apt-get install -y \    
+        eza bat fd-find ripgrep \ 
+        duf bpytop \
+        zoxide git-delta hyperfine \
+        direnv
+
+    success "Pacchetti CLI moderni installati."
 }
 
 ##############################
