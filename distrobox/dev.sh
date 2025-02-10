@@ -25,32 +25,32 @@ install_common() {
     info "[COMMON] Aggiornamento repository e installazione dei pacchetti base..."
     sudo apt-get update -qq
     sudo apt-get install -y \
-        libssl-dev /
-        git /
-        tig /
-        jq /
-        curl /
-        wget /
-        httpie /
-        tmux /
-        exa /
-        tar /
-        gzip /
+        libssl-dev \
+        git \
+        tig \
+        jq \
+        curl \
+        wget \
+        httpie \
+        tmux \
+        tar \
+        gzip \
         unzip
     success "[COMMON] Operazioni completate."
 
     info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
-    sudo apt-get update -qq
+    sudo apt update && sudo apt-get install -y \
+        eza \
+        bat \
+        fd-find \
+        ripgrep \
+        duf \
+        bpytop \
+        zoxide \
+        git-delta \
+        hyperfine \
+        direnv && success "Pacchetti CLI moderni installati."
 
-    # Utility moderne che sostituiscono strumenti tradizionali
-    # Questa é una duplicazione da shell, da rimuovere
-    sudo apt-get install -y \    
-        eza bat fd-find ripgrep \ 
-        duf bpytop \
-        zoxide git-delta hyperfine \
-        direnv
-
-    success "Pacchetti CLI moderni installati."
 }
 
 ##############################
