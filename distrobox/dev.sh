@@ -117,7 +117,6 @@ install_rust() {
 }
 
 install_common
-install_cli_tools
 install_awscli
 install_githubcli
 install_rust
