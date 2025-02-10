@@ -71,7 +71,7 @@ cd - >/dev/null
 #####################
 
 # Elenco dei gruppi di dotfiles da linkare (modifica l'elenco in base alle tue necessità)
-DOTFILES_LIST=("git" "intelephense")
+DOTFILES_LIST=("git" "intelephense" "nvim")
 
 info "Installazione dei dotfiles tramite stow..."
 for package in "${DOTFILES_LIST[@]}"; do
