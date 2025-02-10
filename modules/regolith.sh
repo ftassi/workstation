@@ -12,7 +12,7 @@ gpg --dearmor | sudo tee /usr/share/keyrings/regolith-archive-keyring.gpg > /dev
 
 info "Aggiunta del repository di Regolith..."
 echo deb "[arch=amd64 signed-by=/usr/share/keyrings/regolith-archive-keyring.gpg] \
-https://regolith-desktop.org/release-3_2-ubuntu-jammy-amd64 jammy main" | \
+https://regolith-desktop.org/release-3_2-ubuntu-noble-amd64 noble main" | \
 sudo tee /etc/apt/sources.list.d/regolith.list
 
 info "Aggiornamento dei repository e installazione di regolith-desktop..."
