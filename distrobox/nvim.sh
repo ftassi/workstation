@@ -38,10 +38,21 @@ install_neovim_main() {
     # Crea la directory di installazione se non esiste
     mkdir -p "$INSTALL_DIR"
 
+    sudo apt-get remove --purge -y neovim
+    if ! command -v nvim &>/dev/null; then
+        info "[NEOVIM MAIN] Neovim non trovato: installazione di Neovim ${NVIM_VERSION}..."
+        curl -fsSL "$NVIM_TARBALL_URL" -o /tmp/nvim.tar.gz \
+            && sudo tar --no-same-owner -xzf /tmp/nvim.tar.gz -C "$INSTALL_DIR" --strip-components=1 \
+            && rm /tmp/nvim.tar.gz
+        success "[NEOVIM MAIN] Neovim ${NVIM_VERSION} installato in $INSTALL_DIR."
+    else
+        info "[NEOVIM MAIN] Neovim è già installato."
+    fi
+
     # Installazione di pip per Python3 (se non è già presente)
     info "[PYTHON] Verifica/installazione di python..."
     if ! command -v pip3 &>/dev/null; then
-        sudo apt-get install -y python3-neovim python3-pip python3.10 python3.10-venv python3.10-dev
+        sudo apt-get install -y python3-neovim python3-pip python3-dev
         info "[PYTHON] python installato."
     else
         info "[PYTHON] python è già presente."
@@ -71,15 +82,6 @@ install_neovim_main() {
         info "[NODE] Pacchetto 'neovim' già presente globalmente."
     fi
 
-    if ! command -v nvim &>/dev/null; then
-        info "[NEOVIM MAIN] Neovim non trovato: installazione di Neovim ${NVIM_VERSION}..."
-        curl -fsSL "$NVIM_TARBALL_URL" -o /tmp/nvim.tar.gz \
-            && sudo tar --no-same-owner -xzf /tmp/nvim.tar.gz -C "$INSTALL_DIR" --strip-components=1 \
-            && rm /tmp/nvim.tar.gz
-        success "[NEOVIM MAIN] Neovim ${NVIM_VERSION} installato in $INSTALL_DIR."
-    else
-        info "[NEOVIM MAIN] Neovim è già installato."
-    fi
 
     info "[ALTERNATIVES] Configurazione di Neovim come alternativa a vim..."
     sudo update-alternatives --install /usr/bin/vim vim "$INSTALL_DIR/bin/nvim" 60
