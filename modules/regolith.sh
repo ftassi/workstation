@@ -17,7 +17,11 @@ sudo tee /etc/apt/sources.list.d/regolith.list
 
 info "Aggiornamento dei repository e installazione di regolith-desktop..."
 sudo apt update -qq 
-sudo apt install -y regolith-desktop regolith-session-flashback regolith-look-lascaille
+sudo apt install -y regolith-desktop regolith-session-flashback regolith-look-nord
+
+regolith-look set nord
+
+stow -d "$HOME/dotfiles" -t "$HOME" regolith
 
 success "Regolith Desktop installato con successo!"
 success "Riavvia il sistema per attivare Regolith Desktop."
