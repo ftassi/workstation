@@ -14,6 +14,25 @@ FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v${FONT_VERS
 FONT_DIR="$HOME/.fonts/jetbrains-mono-nerd"
 TEMP_DIR="/tmp"
 
+##############################
+# Verifica se il font è installato
+##############################
+is_font_installed() {
+    fc-list -f '%{family}\n' | awk '!x[$0]++' | grep -q "JetBrainsMono Nerd"
+    return $?
+}
+
+check_font_installed() {
+    info "Verifica se il font JetBrainsMono Nerd Font è già installato..."
+    
+    if is_font_installed; then
+        success "Il font JetBrainsMono Nerd Font è già installato. Nessuna azione necessaria."
+        exit 0
+    else
+        info "Il font JetBrainsMono Nerd Font non è installato. Procedo con l'installazione..."
+    fi
+}
+
 info "Inizio installazione del font JetBrainsMono Nerd Font..."
 
 ##############################
@@ -72,7 +91,7 @@ install_font() {
 verify_installation() {
     info "Verifica dell'installazione del font..."
     
-    if fc-list -f '%{family}\n' | awk '!x[$0]++' | grep -q "JetBrainsMono Nerd"; then
+    if is_font_installed; then
         success "Font JetBrainsMono Nerd Font installato correttamente."
     else
         error "Installazione del font non riuscita. Controlla manualmente."
@@ -83,6 +102,7 @@ verify_installation() {
 ##############################
 # Esecuzione dei ruoli in ordine
 ##############################
+check_font_installed
 install_dependencies
 install_font
 verify_installation
