@@ -12,7 +12,6 @@ FONT_VERSION="3.3.0"
 FONT_NAME="JetBrainsMono"
 FONT_URL="https://github.com/ryanoasis/nerd-fonts/releases/download/v${FONT_VERSION}/${FONT_NAME}.zip"
 FONT_DIR="$HOME/.fonts/jetbrains-mono-nerd"
-DOWNLOAD_DIR="$HOME/Downloads"
 TEMP_DIR="/tmp"
 
 info "Inizio installazione del font JetBrainsMono Nerd Font..."
@@ -36,9 +35,6 @@ install_dependencies() {
 ##############################
 install_font() {
     info "Scaricamento e installazione del font JetBrainsMono Nerd Font v${FONT_VERSION}..."
-    
-    # Crea la directory temporanea se non esiste
-    mkdir -p "$TEMP_DIR"
     
     # Scarica il font
     info "Scaricamento del font da ${FONT_URL}..."
@@ -76,10 +72,8 @@ install_font() {
 verify_installation() {
     info "Verifica dell'installazione del font..."
     
-    if fc-list -f '%{family}\n' | awk '!x[$0]++' | grep -q "JetBrainsMono"; then
+    if fc-list -f '%{family}\n' | awk '!x[$0]++' | grep -q "JetBrainsMono Nerd"; then
         success "Font JetBrainsMono Nerd Font installato correttamente."
-        info "Font disponibili:"
-        fc-list -f '%{family}\n' | awk '!x[$0]++' | grep "JetBrainsMono"
     else
         error "Installazione del font non riuscita. Controlla manualmente."
         exit 1
