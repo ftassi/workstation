@@ -41,7 +41,13 @@ install_neovim_main() {
         curl -fsSL "$NVIM_TARBALL_URL" -o /tmp/nvim.tar.gz \
             && sudo tar --no-same-owner -xzf /tmp/nvim.tar.gz -C "$INSTALL_DIR" --strip-components=1 \
             && rm /tmp/nvim.tar.gz
+        sudo chown -R $USER:$USER ~/.local/bin/nvim ~/.local/lib/nvim ~/.local/share/nvim
         success "[NEOVIM MAIN] Neovim ${NVIM_VERSION} installato in $INSTALL_DIR."
+        info "[ALTERNATIVES] Configurazione di Neovim come alternativa a vim..."
+        sudo update-alternatives --install /usr/bin/vim vim "$INSTALL_DIR/bin/nvim" 60
+        sudo update-alternatives --set vim "$INSTALL_DIR/bin/nvim"
+        success "[ALTERNATIVES] Neovim configurato come default per 'vim'."
+
     else
         info "[NEOVIM MAIN] Neovim è già installato."
     fi
@@ -80,10 +86,6 @@ install_neovim_main() {
     fi
 
 
-    info "[ALTERNATIVES] Configurazione di Neovim come alternativa a vim..."
-    sudo update-alternatives --install /usr/bin/vim vim "$INSTALL_DIR/bin/nvim" 60
-    sudo update-alternatives --set vim "$INSTALL_DIR/bin/nvim"
-    success "[ALTERNATIVES] Neovim configurato come default per 'vim'."
 }
 
 ##############################
