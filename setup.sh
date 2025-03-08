@@ -40,9 +40,8 @@ if [ ! -f "git-crypt.key.gpg" ]; then
     exit 1
 fi
 
-info "[INPUT] Inserisci la master password:"
-read -s MASTER_PASSWORD
-echo ""
+# Richiedi la master password all'utente
+MASTER_PASSWORD=$(prompt_master_password)
 
 # Decripta la chiave AES di git-crypt
 gpg --batch --yes --passphrase "$MASTER_PASSWORD" --output git-crypt.key --decrypt git-crypt.key.gpg
