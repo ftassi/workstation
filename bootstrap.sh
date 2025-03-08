@@ -152,13 +152,76 @@ start_provisioning() {
     ./main.sh
 }
 
+# Funzione per verificare l'integrità tramite checksum crittografato
+verify_integrity() {
+    info "Verifico l'integrità dello script..."
+    
+    # URL del file SHA crittografato
+    SHA_GPG_URL="https://raw.githubusercontent.com/ftassi/workstation/master/bootstrap.sha.gpg"
+    LOCAL_SCRIPT="/tmp/bootstrap_tmp.sh"
+    SHA_GPG_FILE="/tmp/bootstrap.sha.gpg"
+    DECRYPTED_SHA_FILE="/tmp/bootstrap.sha.decrypted"
+    
+    # Salva una copia dello script corrente in /tmp
+    cat "$0" > "$LOCAL_SCRIPT"
+    
+    # Scarica il file SHA crittografato
+    info "Scaricamento del file di verifica..."
+    if ! curl -sSL "$SHA_GPG_URL" -o "$SHA_GPG_FILE"; then
+        error "Impossibile scaricare il file di verifica dell'integrità."
+        cleanup_tmp_files
+        exit 1
+    fi
+    
+    # Richiedi la master password
+    prompt "Inserisci la master password per verificare l'integrità dello script:"
+    read -s INTEGRITY_PASSWORD
+    echo ""
+    
+    # Decrittografa il file SHA
+    info "Decrittazione del file di verifica..."
+    if ! echo "$INTEGRITY_PASSWORD" | gpg --batch --yes --passphrase-fd 0 -o "$DECRYPTED_SHA_FILE" -d "$SHA_GPG_FILE" 2>/dev/null; then
+        error "Impossibile decrittare il file di verifica. Password non corretta."
+        cleanup_tmp_files
+        exit 1
+    fi
+    
+    # Calcola lo SHA256 dello script corrente
+    CURRENT_SHA=$(sha256sum "$LOCAL_SCRIPT" | cut -d' ' -f1)
+    EXPECTED_SHA=$(cat "$DECRYPTED_SHA_FILE" | cut -d' ' -f1)
+    
+    # Verifica che gli SHA corrispondano
+    if [ "$CURRENT_SHA" != "$EXPECTED_SHA" ]; then
+        error "Verifica dell'integrità fallita! Il file potrebbe essere stato manipolato."
+        error "SHA atteso: $EXPECTED_SHA"
+        error "SHA calcolato: $CURRENT_SHA"
+        cleanup_tmp_files
+        exit 1
+    fi
+    
+    info "Verifica integrità completata con successo."
+}
+
+# Funzione per pulire i file temporanei
+cleanup_tmp_files() {
+    info "Pulizia dei file temporanei..."
+    rm -f "/tmp/bootstrap_tmp.sh" "/tmp/bootstrap.sha.gpg" "/tmp/bootstrap.sha.decrypted"
+}
+
 # Esecuzione principale
 main() {
     show_banner
     check_dependencies
+    
+    # Verifica l'integrità prima di procedere
+    verify_integrity
+    
     clone_repository
     unlock_encrypted_files
     start_provisioning
+    
+    # Pulisci i file temporanei alla fine dell'esecuzione
+    cleanup_tmp_files
 }
 
 # Avvia l'esecuzione
