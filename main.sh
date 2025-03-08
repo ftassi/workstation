@@ -29,7 +29,7 @@ for module in "${MODULES[@]}"; do
       info "Esecuzione di $(basename "$module")..."
       bash "$module"
   else
-      cleanup "Modulo $(basename "$module") non eseguibile o non trovato."
+      die "Modulo $(basename "$module") non eseguibile o non trovato."
   fi
 done
 
@@ -44,7 +44,7 @@ done
 #       bash "modules/distrobox.sh" "$distrobox"
 #       info "Distrobox $(basename "$distrobox") creata con successo. Ricordarti di eseguire il provisioning con distrobox/$(basename "$distrobox").sh"
 #   else
-#       cleanup "Modulo distrobox non eseguibile o non trovato."
+#       die "Modulo distrobox non eseguibile o non trovato."
 #   fi
 # done
 

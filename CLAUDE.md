@@ -11,7 +11,7 @@
 - **Bash**: Scripts use `set -euo pipefail` via setup_error_handling()
 - **Functions**: Use snake_case with descriptive names
 - **Variables**: Use uppercase for constants, lowercase for locals
-- **Error Handling**: Use `cleanup()` to exit on error with appropriate message
+- **Error Handling**: Use `die()` to exit on error with appropriate message
 - **Logging**: Use `info()`, `success()`, and `error()` functions from common.sh
 - **Documentation**: Header comments for script purpose and dependencies
 - **Modularity**: Use separate scripts in modules/ for each component
@@ -20,7 +20,7 @@
 
 ## Error Handling
 - All scripts must include `setup_error_handling()` after sourcing common.sh
-- Use `cleanup "Error message"` instead of `error` + `exit 1`
+- Use `die "Error message"` instead of `error` + `exit 1`
 - Trap on ERR is automatically configured by setup_error_handling
 
 ## Repository Structure

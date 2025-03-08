@@ -10,10 +10,10 @@ info()    { echo -e "${GREEN}[INFO] $1${RESET}"; }
 error()   { echo -e "${RED}[ERRORE] $1${RESET}"; }
 success() { echo -e "${GREEN}[SUCCESSO] $1${RESET}"; }
 
-# Funzione per terminare lo script in caso di errore
+# Funzione per terminare lo script in caso di errore fatale
 # Parametro opzionale: messaggio di errore personalizzato
-cleanup() {
-    local error_message="${1:-Si è verificato un errore. Uscita dallo script.}"
+die() {
+    local error_message="${1:-Si è verificato un errore fatale. Uscita dallo script.}"
     error "$error_message"
     # Termina lo script con codice di errore
     exit 1
@@ -29,8 +29,8 @@ setup_error_handling() {
     set -euo pipefail
     
     # Imposta il trap per la gestione degli errori
-    # In caso di errore chiama la funzione cleanup
-    trap cleanup ERR
+    # In caso di errore chiama la funzione die
+    trap die ERR
 }
 
 # Funzione per ottenere la master password in modo sicuro

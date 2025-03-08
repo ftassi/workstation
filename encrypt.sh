@@ -11,14 +11,14 @@ setup_error_handling
 
 # Verifica che sia stato passato un file come argomento
 if [ "$#" -ne 1 ]; then
-    cleanup "[USO] $0 <file_da_cifrare>"
+    die "[USO] $0 <file_da_cifrare>"
 fi
 
 FILE="$1"
 
 # Controllo che il file esista
 if [ ! -f "$FILE" ]; then
-    cleanup "Il file $FILE non esiste."
+    die "Il file $FILE non esiste."
 fi
 
 # Richiedi la master password all'utente

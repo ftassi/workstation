@@ -18,7 +18,7 @@ info "Dopo il provisioning elimina il file /etc/sudoers.d/zz_provisioning_${CURR
 
 # Verifica che l'utente sia stato trovato
 if [ -z "$CURRENT_USER" ]; then
-    cleanup "Impossibile determinare l'utente corrente."
+    die "Impossibile determinare l'utente corrente."
 fi
 
 # Scegli un nome per il file in modo che venga letto per ultimo (ordine lessicografico)
@@ -32,7 +32,7 @@ chmod 0440 "$SUDOERS_FILE"
 
 # Verifica la sintassi del file
 if ! visudo -cf "$SUDOERS_FILE"; then
-    cleanup "Errore di sintassi nel file sudoers creato."
+    die "Errore di sintassi nel file sudoers creato."
 fi
 
 info "File sudoers creato correttamente in $SUDOERS_FILE"
@@ -43,7 +43,7 @@ sudo apt-get update -qq && sudo apt-get install -y git tig gpg git-crypt
 
 # Controllo che il repository sia stato clonato correttamente
 if [ ! -f "git-crypt.key.gpg" ]; then
-    cleanup "Il file git-crypt.key.gpg non esiste. Assicurati di aver clonato il repository corretto."
+    die "Il file git-crypt.key.gpg non esiste. Assicurati di aver clonato il repository corretto."
 fi
 
 # Richiedi la master password all'utente

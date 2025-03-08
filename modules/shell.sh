@@ -16,7 +16,7 @@ info "Inizio provisioning shell..."
 # Verifica dei prerequisiti
 #####################
 if [ ! -d "$HOME/dotfiles" ]; then
-    cleanup "La directory dotfiles ($HOME/dotfiles) non esiste. Assicurati di aver eseguito il modulo dotfiles prima."
+    die "La directory dotfiles ($HOME/dotfiles) non esiste. Assicurati di aver eseguito il modulo dotfiles prima."
 fi
 
 #####################
@@ -90,7 +90,7 @@ link_shell_dotfiles() {
             (cd "$HOME/dotfiles" && stow "$item")
         else
             error "Configurazione '$item' non trovata nella directory $HOME/dotfiles."
-            cleanup "Errore durante l'esecuzione"
+            die "Errore durante l'esecuzione"
         fi
     done
     success "Linking dei dotfiles per la shell completato."

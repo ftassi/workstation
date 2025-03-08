@@ -18,7 +18,7 @@ TARGET_DIR="$HOME/.ssh"
 
 # Controlla se la directory dei secrets esiste
 if [ ! -d "$SECRETS_DIR" ]; then
-    cleanup "Directory dei secrets SSH non trovata: $SECRETS_DIR"
+    die "Directory dei secrets SSH non trovata: $SECRETS_DIR"
 fi
 
 # Crea la directory ~/.ssh se non esiste e imposta i permessi
@@ -48,7 +48,7 @@ for file in "${FILES[@]}"; do
                 ;;
         esac
     else
-        cleanup "File $file non trovato in $SECRETS_DIR"
+        die "File $file non trovato in $SECRETS_DIR"
     fi
 done
 
@@ -66,7 +66,7 @@ if echo "$SSH_TEST_OUTPUT" | grep -q "successfully authenticated"; then
 elif echo "$SSH_TEST_OUTPUT" | grep -q "Hi "; then
     success "Connessione SSH a GitHub verificata con successo."
 else
-    cleanup "Test di connessione SSH a GitHub fallito. Output: $SSH_TEST_OUTPUT"
+    die "Test di connessione SSH a GitHub fallito. Output: $SSH_TEST_OUTPUT"
 fi
 
 success "Provisioning SSH completato con successo."

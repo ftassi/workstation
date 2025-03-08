@@ -11,14 +11,14 @@ setup_error_handling
 
 # Verifica che sia stato passato un file come argomento
 if [ "$#" -ne 1 ]; then
-    cleanup "[USO] $0 <file_da_decriptare.gpg>"
+    die "[USO] $0 <file_da_decriptare.gpg>"
 fi
 
 FILE="$1"
 
 # Controllo che il file esista
 if [ ! -f "$FILE" ]; then
-    cleanup "Il file $FILE non esiste."
+    die "Il file $FILE non esiste."
 fi
 
 # Determina il nome del file decriptato (senza .gpg)

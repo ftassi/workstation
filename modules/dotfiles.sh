@@ -67,7 +67,7 @@ if [ -f "$GIT_CRYPT_KEY_PATH" ]; then
     git-crypt unlock "$GIT_CRYPT_KEY_PATH"
     success "git-crypt ha sbloccato i secret."
 else
-    cleanup "Chiave git-crypt non trovata in $GIT_CRYPT_KEY_PATH."
+    die "Chiave git-crypt non trovata in $GIT_CRYPT_KEY_PATH."
 fi
 cd - >/dev/null
 

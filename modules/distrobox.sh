@@ -12,7 +12,7 @@ setup_error_handling
 
 # Verifica che sia stato passato almeno un argomento (il nome della distrobox)
 if [ "$#" -lt 1 ]; then
-    cleanup "Utilizzo: $0 <nome_distrobox>"
+    die "Utilizzo: $0 <nome_distrobox>"
 fi
 
 info "Creazione di una distrobox basata su ubuntu:22.04 per neovim..."

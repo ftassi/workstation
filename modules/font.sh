@@ -100,7 +100,7 @@ verify_installation() {
         success "Font JetBrainsMono Nerd Font installato correttamente."
     else
         error "Installazione del font non riuscita. Controlla manualmente."
-        cleanup "Errore durante l'esecuzione"
+        die "Errore durante l'esecuzione"
     fi
 }
 
