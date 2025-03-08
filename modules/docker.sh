@@ -44,17 +44,53 @@ sudo apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plug
 
 # Aggiunta dell'utente corrente al gruppo docker per eseguire comandi senza sudo
 info "Aggiunta dell'utente corrente al gruppo Docker..."
-sudo usermod -aG docker "$USER"
+CURRENT_USER=$(whoami)
 
-# Nota: Per applicare subito la modifica della membership, è consigliabile disconnettersi e riconnettersi.
-info "Docker è stato installato e configurato correttamente."
-info "Per applicare subito la modifica della membership, è consigliabile disconnettersi e riconnettersi."
+# Verifica se l'utente è già nel gruppo docker
+if groups "$CURRENT_USER" | grep -q "\bdocker\b"; then
+    info "L'utente $CURRENT_USER è già nel gruppo docker."
+else
+    sudo usermod -aG docker "$CURRENT_USER"
+    info "Utente $CURRENT_USER aggiunto al gruppo docker."
+    
+    # Attiva il gruppo docker nella sessione corrente senza logout/login
+    info "Attivazione del gruppo docker nella sessione corrente..."
+    
+    # Salva una copia dello script che deve essere eseguito in una nuova shell
+    TEMP_SCRIPT=$(mktemp)
+    cat > "$TEMP_SCRIPT" << 'EOF'
+#!/bin/bash
+# Inclusione delle funzioni comuni per i messaggi di log
+source "$(dirname "$0")/../common.sh"
+# Verifica se l'utente può eseguire docker
+if docker info &>/dev/null; then
+    info "Gruppo docker attivato correttamente."
+else
+    info "ATTENZIONE: Non è stato possibile attivare il gruppo docker nella sessione corrente."
+    info "Per utilizzare docker senza sudo, dovrai disconnetterti e riconnetterti."
+fi
+EOF
+    chmod +x "$TEMP_SCRIPT"
+    
+    # Esegui il comando newgrp in una nuova shell
+    info "Tentativo di attivare il gruppo docker senza riavvio della sessione..."
+    newgrp docker << EONG
+bash "$TEMP_SCRIPT"
+EONG
+    
+    # Rimuovi il file temporaneo
+    rm "$TEMP_SCRIPT"
+fi
 
 # Verifica dell'installazione di Docker
 info "Verifica dell'installazione di Docker..."
-docker --version
-docker compose version
-
-info "Dopo aver riconnesso l'utente, esegui il comando 'docker run hello-world' per verificare il funzionamento di Docker."
+if docker --version &>/dev/null; then
+    docker --version
+    docker compose version
+    info "Per verificare il funzionamento completo di Docker, esegui: docker run hello-world"
+else
+    info "Docker è installato ma potrebbe essere necessario riavviare la sessione per utilizzarlo senza sudo."
+    info "Dopo aver riavviato la sessione, verifica con: docker run hello-world"
+fi
 
 success "Base provisioning completato."
