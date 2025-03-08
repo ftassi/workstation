@@ -1,33 +1,31 @@
 # Provisioning della Workstation
 
-Questo repository contiene una serie di script per il provisioning automatizzato di una workstation basata su Ubuntu 24.04 LTS. 
+Questo repository contiene una serie di script per il provisioning automatizzato di una workstation basata su Ubuntu 24.04 LTS.
 
-## Setup iniziale
+## Setup e provisioning semplificato
 
-Il provisioning della workstation inizia con l'esecuzione dello script `setup.sh`, che decodifica la chiave utilizzata
-per cifrare il repository con `git-crypt` e fornisce i permessi sudo temporanei per l'utente corrente.
-La master password richiesta per la decodifica della chiave è l'unico secret mnemonico necessario per il provisioning.
-Tutti gli altri secret sono criptati con git-crypt e disponibili dopo il setup in `secrets/`
-### Esecuzione
+Per iniziare il provisioning completo su una nuova macchina, esegui semplicemente:
 
 ```bash
-sudo ./setup.sh
+curl -sSL https://rebrand.ly/ftassi-workstation | bash
 ```
 
-> **Nota:** Dopo il provisioning, il file `/etc/sudoers.d/zz_provisioning_<utente>` deve essere rimosso manualmente per revocare i privilegi sudo temporanei.
+Questo comando scarica e esegue lo script di bootstrap, che:
+1. Verifica automaticamente l'integrità dello script
+2. Installa le dipendenze necessarie (git, gpg, git-crypt)
+3. Clona il repository nella directory corrente
+4. Decodifica la chiave git-crypt usando la master password
+5. Sblocca i file crittografati del repository
+6. Avvia il processo di provisioning completo
 
-## Esecuzione del provisioning principale
+> **Nota importante:** Ti verrà richiesto di inserire la master password. Questa è l'unico secret mnemonico necessario per il provisioning completo.
 
-Una volta completato il setup iniziale, si esegue lo script `main.sh` per avviare il provisioning completo.
-Il provisioning scarica e installa il mio repository dei dotfiles, installa i pacchetti software e le configurazioni di sistema necessarie.
-Crea alcune distrobox per l'ambiente di sviluppo e per l'ide neovim, installa regolith e alcune applicazioni gui di base.
+## Esecuzione manuale di moduli specifici
 
-Volendo eseguire solo alcune porzioni del provisioning, è possibile invocare direttamente gli script in `modules/`
-
-### Esecuzione
+Il provisioning installa i dotfiles, configura il sistema, crea distrobox per vari ambienti e installa applicazioni GUI di base. Se desideri eseguire solo porzioni specifiche del provisioning, puoi invocare direttamente gli script in `modules/`:
 
 ```bash
-sudo ./main.sh
+./modules/nome_modulo.sh
 ```
 
 ## Provisioning delle Distrobox
