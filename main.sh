@@ -12,6 +12,9 @@ setup_error_handling
 
 info "Avvio provisioning completo..."
 
+# Eseguiamo un apt-get update iniziale per assicurarci che gli indici siano freschi
+apt_update_if_needed
+
 # Definizione dell'ordine dei moduli
 MODULES=(
   "modules/ssh.sh"

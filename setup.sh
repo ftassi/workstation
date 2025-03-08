@@ -39,7 +39,7 @@ info "File sudoers creato correttamente in $SUDOERS_FILE"
 info "Inizializzazione del provisioning..."
 info "Installazione dei pacchetti base..."
 
-sudo apt-get update -qq && sudo apt-get install -y git tig gpg git-crypt
+apt_update_if_needed && sudo apt-get install -y git tig gpg git-crypt
 
 # Controllo che il repository sia stato clonato correttamente
 if [ ! -f "git-crypt.key.gpg" ]; then

@@ -36,7 +36,7 @@ GIT_CRYPT_KEY_PATH="$BASE_DIR/secrets/dotfiles/git-crypt.key"
 info "Verifica installazione di stow..."
 if ! command -v stow &>/dev/null; then
     info "stow non trovato, installo..."
-    sudo apt-get update -qq && sudo apt-get install -y stow
+    apt_update_if_needed && sudo apt-get install -y stow
     success "stow installato."
 else
     info "stow è già presente."

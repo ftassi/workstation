@@ -25,7 +25,7 @@ fi
 
 install_distrobox() {
     info "Installo dipendenze per distrobox..."
-    sudo apt-get update -qq && sudo apt-get install -y curl podman xsel flatpak
+    apt_update_if_needed && sudo apt-get install -y curl podman xsel flatpak
 
     if ! command -v distrobox &>/dev/null; then
         info "Distrobox non trovato, installo..."
@@ -42,7 +42,7 @@ install_distrobox() {
 
 install_cli_tools() {
     info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
-    sudo apt-get update -qq
+    apt_update_if_needed
     sudo apt-get install -y software-properties-common
     add_apt_repository "aslatter-ppa.list" "deb http://ppa.launchpad.net/aslatter/ppa/ubuntu $(lsb_release -cs) main"
 

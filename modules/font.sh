@@ -46,7 +46,7 @@ info "Inizio installazione del font JetBrainsMono Nerd Font..."
 install_dependencies() {
     info "Verifica/installazione delle dipendenze necessarie..."
     if ! command -v unzip &>/dev/null; then
-        sudo apt-get update -qq
+        apt_update_if_needed
         sudo apt-get install -y unzip
         success "Unzip installato."
     else

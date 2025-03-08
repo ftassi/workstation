@@ -21,7 +21,7 @@ done
 
 # Installazione delle dipendenze necessarie
 info "Installazione delle dipendenze necessarie..."
-sudo apt-get update -qq
+apt_update_if_needed
 sudo apt-get install -y ca-certificates curl gnupg
 
 # Aggiunta della chiave GPG ufficiale di Docker in modo idempotente

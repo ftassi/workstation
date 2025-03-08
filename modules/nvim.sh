@@ -26,7 +26,7 @@ info "Inizio provisioning di Neovim in questa distrobox..."
 ##############################
 install_common() {
     info "[COMMON] Aggiornamento repository e installazione dei pacchetti base..."
-    sudo apt-get update -qq
+    apt_update_if_needed
     sudo apt-get install -y curl ca-certificates tar unzip ripgrep fd-find xsel
     success "[COMMON] Operazioni completate."
 }
@@ -133,7 +133,7 @@ install_luarocks() {
     info "[LUA] Verifica/installazione di Luarocks..."
     if ! command -v luarocks &>/dev/null; then
         info "[LUA] Luarocks non trovato: installazione in corso..."
-        sudo apt-get update -qq
+        apt_update_if_needed
         sudo apt-get install -y luarocks
         success "[LUA] Luarocks installato."
     else

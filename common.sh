@@ -49,6 +49,9 @@ add_gpg_key() {
     local key_path="$2"
     
     if [ ! -f "$key_path" ]; then
+        # Marchiamo che l'update sarà necessario prima di iniziare la modifica
+        mark_apt_update_needed
+        
         info "Aggiunta della chiave GPG in $key_path..."
         
         # Crea la directory se non esiste
@@ -69,6 +72,45 @@ add_gpg_key() {
     fi
 }
 
+# File temporaneo per tenere traccia del timestamp dell'ultimo apt update
+APT_UPDATE_TIMESTAMP_FILE="/tmp/apt_update_timestamp"
+# Intervallo in secondi dopo il quale fare un nuovo apt update (5 minuti)
+APT_UPDATE_INTERVAL=300
+
+# Funzione per eseguire apt update solo se necessario
+apt_update_if_needed() {
+    # Forza l'update se il parametro "force" è passato
+    local force=${1:-0}
+    local current_time
+    current_time=$(date +%s)
+    local next_update_time=0
+    
+    # Se il file esiste, leggi il timestamp del prossimo update necessario
+    if [ -f "$APT_UPDATE_TIMESTAMP_FILE" ]; then
+        next_update_time=$(cat "$APT_UPDATE_TIMESTAMP_FILE")
+    fi
+    
+    # Se è ora di fare update o se force=1
+    if [ "$force" -eq 1 ] || [ "$current_time" -ge "$next_update_time" ]; then
+        info "Aggiornamento degli indici apt..."
+        sudo apt-get update -qq
+        # Imposta il prossimo update a current_time + intervallo
+        echo $((current_time + APT_UPDATE_INTERVAL)) > "$APT_UPDATE_TIMESTAMP_FILE"
+        success "Indici apt aggiornati. Prossimo update non prima di $(date -d @$((current_time + APT_UPDATE_INTERVAL)))"
+    else
+        # Calcola quanto tempo manca al prossimo update
+        local remaining=$((next_update_time - current_time))
+        info "Indici apt già aggiornati, prossimo update tra $remaining secondi."
+    fi
+}
+
+# Funzione per marcare gli indici apt come necessitanti un aggiornamento immediato
+mark_apt_update_needed() {
+    # Imposta il timestamp a 0 per forzare un update immediato al prossimo controllo
+    echo "0" > "$APT_UPDATE_TIMESTAMP_FILE"
+    info "Marcato aggiornamento apt come necessario."
+}
+
 # Funzione per aggiungere un repository apt in modo idempotente
 # $1: nome del file list (es. "docker.list")
 # $2: contenuto del repository
@@ -77,13 +119,15 @@ add_apt_repository() {
     local repo_content="$2"
     
     if [ ! -f "$repo_file" ]; then
+        # Marchiamo che l'update sarà necessario prima di iniziare la modifica
+        mark_apt_update_needed
+        
         info "Aggiunta del repository in $repo_file..."
         echo "$repo_content" | sudo tee "$repo_file" > /dev/null
         success "Repository aggiunto."
         
         # Aggiorna apt solo se un nuovo repository è stato aggiunto
-        info "Aggiornamento degli indici apt..."
-        sudo apt-get update -qq
+        apt_update_if_needed 1  # Forza l'update
     else
         info "Il repository è già configurato in $repo_file."
     fi

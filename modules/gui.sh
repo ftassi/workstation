@@ -14,7 +14,7 @@ info "Installazione degli applicativi GUI..."
 
 # Aggiornamento della lista dei pacchetti e installazione dei tool necessari
 info "Aggiornamento del sistema e installazione delle dipendenze..."
-sudo apt update
+apt_update_if_needed
 sudo apt install -y wget curl gnupg2 software-properties-common apt-transport-https
 
 ##############################

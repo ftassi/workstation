@@ -16,7 +16,8 @@ if [ "$DISABLE" = false ]; then
     # Controlla se OpenSSH Server è installato
     if ! dpkg -l | grep -q "openssh-server"; then
         echo "Installazione di OpenSSH Server..."
-        sudo apt update && sudo apt install -y openssh-server
+        source "$(dirname "$0")/common.sh"
+        apt_update_if_needed && sudo apt install -y openssh-server
     else
         echo "OpenSSH Server è già installato."
     fi
@@ -33,7 +34,11 @@ if [ "$DISABLE" = false ]; then
     # Controlla se il firewall UFW è installato
     if ! command -v ufw &> /dev/null; then
         echo "Installazione di UFW..."
-        sudo apt update && sudo apt install -y ufw
+        # Se non abbiamo già caricato common.sh, caricalo
+        if ! type apt_update_if_needed &>/dev/null; then
+            source "$(dirname "$0")/common.sh"
+        fi
+        apt_update_if_needed && sudo apt install -y ufw
     else
         echo "UFW è già installato."
     fi

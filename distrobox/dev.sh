@@ -23,7 +23,7 @@ info "Provisioning dell'ambiente di sviluppo..."
 ##############################
 install_common() {
     info "[COMMON] Aggiornamento repository e installazione dei pacchetti base..."
-    sudo apt-get update -qq
+    apt_update_if_needed
     sudo apt-get install -y \
         libssl-dev \
         git \
@@ -39,7 +39,8 @@ install_common() {
     success "[COMMON] Operazioni completate."
 
     info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
-    sudo apt update && sudo apt-get install -y \
+    apt_update_if_needed
+    sudo apt-get install -y \
         eza \
         bat \
         fd-find \
@@ -79,7 +80,7 @@ install_awscli() {
 ##############################
 install_githubcli() {
     info "[GITHUBCLI] Installazione di GitHub CLI..."
-    type -p wget >/dev/null || (sudo apt update && sudo apt-get install wget -y)
+    type -p wget >/dev/null || (apt_update_if_needed && sudo apt-get install wget -y)
     add_gpg_key "https://cli.github.com/packages/githubcli-archive-keyring.gpg" "/etc/apt/keyrings/githubcli-archive-keyring.gpg"
     add_apt_repository "github-cli.list" "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main"
     sudo apt install gh -y
