@@ -44,7 +44,7 @@ install_cli_tools() {
     info "Aggiornamento repository e installazione dei pacchetti CLI moderni..."
     sudo apt-get update -qq
     sudo apt-get install -y software-properties-common
-    sudo add-apt-repository -y ppa:aslatter/ppa
+    add_apt_repository "aslatter-ppa.list" "deb http://ppa.launchpad.net/aslatter/ppa/ubuntu $(lsb_release -cs) main"
 
     # Pacchetti fondamentali per avere una shell moderna
     sudo apt-get install -y zsh zsh-antigen alacritty

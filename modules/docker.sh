@@ -24,20 +24,14 @@ info "Installazione delle dipendenze necessarie..."
 sudo apt-get update -qq
 sudo apt-get install -y ca-certificates curl gnupg
 
-# Aggiunta della chiave GPG ufficiale di Docker
-info "Aggiunta della chiave GPG ufficiale di Docker..."
-sudo install -m 0755 -d /etc/apt/keyrings
-sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-sudo chmod a+r /etc/apt/keyrings/docker.asc
+# Aggiunta della chiave GPG ufficiale di Docker in modo idempotente
+add_gpg_key "https://download.docker.com/linux/ubuntu/gpg" "/etc/apt/keyrings/docker.asc"
 
-# Aggiunta del repository Docker
-info "Aggiunta del repository Docker..."
+# Aggiunta del repository Docker in modo idempotente
 # Determina il nome in codice di Ubuntu
 CODENAME=$(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}")
 DEB_LINE="deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $CODENAME stable"
-# Scrive la linea del repository in un file all'interno di /etc/apt/sources.list.d/
-echo "$DEB_LINE" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-sudo apt-get update -qq
+add_apt_repository "docker.list" "$DEB_LINE"
 
 # Verifica se Docker è già installato (opzionale)
 if command -v docker &>/dev/null; then

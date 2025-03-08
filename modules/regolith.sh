@@ -12,17 +12,14 @@ setup_error_handling
 
 info "Installazione di regolith-desktop..."
 
-info "Aggiunta della chiave GPG di Regolith..."
-wget -qO - https://regolith-desktop.org/regolith.key | \
-gpg --dearmor | sudo tee /usr/share/keyrings/regolith-archive-keyring.gpg > /dev/null
+# Aggiunta della chiave GPG di Regolith in modo idempotente
+add_gpg_key "https://regolith-desktop.org/regolith.key" "/usr/share/keyrings/regolith-archive-keyring.gpg"
 
-info "Aggiunta del repository di Regolith..."
-echo deb "[arch=amd64 signed-by=/usr/share/keyrings/regolith-archive-keyring.gpg] \
-https://regolith-desktop.org/release-3_2-ubuntu-noble-amd64 noble main" | \
-sudo tee /etc/apt/sources.list.d/regolith.list
+# Aggiunta del repository di Regolith in modo idempotente
+REPO_LINE="deb [arch=amd64 signed-by=/usr/share/keyrings/regolith-archive-keyring.gpg] https://regolith-desktop.org/release-3_2-ubuntu-noble-amd64 noble main"
+add_apt_repository "regolith.list" "$REPO_LINE"
 
-info "Aggiornamento dei repository e installazione di regolith-desktop..."
-sudo apt update -qq 
+info "Installazione di regolith-desktop..."
 sudo apt install -y regolith-desktop regolith-session-flashback regolith-look-nord
 
 regolith-look set nord
