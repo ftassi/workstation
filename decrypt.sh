@@ -1,22 +1,24 @@
 #!/bin/bash
-
-set -e
+#
+# Script per decifrare un file .gpg utilizzando una password master
+# Richiede: gpg
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/common.sh"
 
+# Imposta la gestione errori avanzata
+setup_error_handling
+
 # Verifica che sia stato passato un file come argomento
 if [ "$#" -ne 1 ]; then
-    error "[USO] $0 <file_da_decriptare.gpg>"
-    exit 1
+    cleanup "[USO] $0 <file_da_decriptare.gpg>"
 fi
 
 FILE="$1"
 
 # Controllo che il file esista
 if [ ! -f "$FILE" ]; then
-    error "Il file $FILE non esiste."
-    exit 1
+    cleanup "Il file $FILE non esiste."
 fi
 
 # Determina il nome del file decriptato (senza .gpg)

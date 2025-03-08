@@ -1,10 +1,14 @@
 #!/bin/bash
-set -euo pipefail
+#
+# Script di provisioning per Docker
+# Installa e configura Docker Engine e Docker Compose
+# Richiede: curl, apt
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
 
-trap cleanup ERR
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 # Rimozione di eventuali pacchetti Docker incompatibili
 info "Rimozione di pacchetti Docker incompatibili, se presenti..."

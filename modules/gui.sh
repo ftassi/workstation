@@ -1,8 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Script di provisioning per applicazioni GUI
+# Installa e configura applicazioni desktop come browser e strumenti grafici
+# Richiede: wget, curl, apt
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 info "Installazione degli applicativi GUI..."
 

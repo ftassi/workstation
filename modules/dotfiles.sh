@@ -1,8 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Script di provisioning per dotfiles
+# Clona il repository dotfiles, sblocca i secret e li installa con stow
+# Richiede: git, git-crypt, stow
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 info "Inizio provisioning dotfiles..."
 
@@ -61,8 +67,7 @@ if [ -f "$GIT_CRYPT_KEY_PATH" ]; then
     git-crypt unlock "$GIT_CRYPT_KEY_PATH"
     success "git-crypt ha sbloccato i secret."
 else
-    error "Chiave git-crypt non trovata in $GIT_CRYPT_KEY_PATH."
-    exit 1
+    cleanup "Chiave git-crypt non trovata in $GIT_CRYPT_KEY_PATH."
 fi
 cd - >/dev/null
 

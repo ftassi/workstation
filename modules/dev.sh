@@ -1,9 +1,14 @@
 #!/bin/bash
-set -euo pipefail
+#
+# Script di provisioning per ambiente di sviluppo
+# Installa e configura strumenti di sviluppo, AWS CLI, GitHub CLI e Rust
+# Richiede: curl, apt, wget
 
-# Inclusione delle funzioni comuni (es. info, error, success)
-# Assicurati che il file common.sh sia presente nella directory relativa corretta
+# Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 
 ##############################

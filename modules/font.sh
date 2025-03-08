@@ -1,9 +1,14 @@
 #!/bin/bash
-set -euo pipefail
+#
+# Script di provisioning per font
+# Installa e configura i font necessari per il sistema
+# Richiede: curl, unzip
 
-# Inclusione delle funzioni comuni (es. info, error, success)
-# Assicurati che il file common.sh sia presente nella directory relativa corretta
+# Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 ##############################
 # Configurazione di base
@@ -95,7 +100,7 @@ verify_installation() {
         success "Font JetBrainsMono Nerd Font installato correttamente."
     else
         error "Installazione del font non riuscita. Controlla manualmente."
-        exit 1
+        cleanup "Errore durante l'esecuzione"
     fi
 }
 

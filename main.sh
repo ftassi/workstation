@@ -1,8 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Script principale di provisioning della workstation
+# Esegue in sequenza tutti i moduli di installazione
+#
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 info "Avvio provisioning completo..."
 
@@ -23,8 +29,7 @@ for module in "${MODULES[@]}"; do
       info "Esecuzione di $(basename "$module")..."
       bash "$module"
   else
-      error "Modulo $(basename "$module") non eseguibile o non trovato."
-      exit 1
+      cleanup "Modulo $(basename "$module") non eseguibile o non trovato."
   fi
 done
 
@@ -39,10 +44,8 @@ done
 #       bash "modules/distrobox.sh" "$distrobox"
 #       info "Distrobox $(basename "$distrobox") creata con successo. Ricordarti di eseguire il provisioning con distrobox/$(basename "$distrobox").sh"
 #   else
-#       error "Modulo distrobox non eseguibile o non trovato."
-#       exit 1
+#       cleanup "Modulo distrobox non eseguibile o non trovato."
 #   fi
 # done
-
 
 success "Provisioning completato con successo!"

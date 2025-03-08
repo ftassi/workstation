@@ -1,17 +1,19 @@
 #!/bin/bash
-set -euo pipefail
+#
+# Script di provisioning per Distrobox
+# Crea e configura container Distrobox per ambienti isolati
+# Richiede: distrobox, podman
 
-# Inclusione delle funzioni comuni (assicurati che common.sh definisca anche le funzioni 'info', 'error' e 'cleanup')
+# Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 # Verifica che sia stato passato almeno un argomento (il nome della distrobox)
 if [ "$#" -lt 1 ]; then
-    error "Utilizzo: $0 <nome_distrobox>"
-    exit 1
+    cleanup "Utilizzo: $0 <nome_distrobox>"
 fi
-
-# Imposta una trap per eseguire la funzione di cleanup in caso di errore (assicurati che 'cleanup' sia definita in common.sh)
-trap cleanup ERR
 
 info "Creazione di una distrobox basata su ubuntu:22.04 per neovim..."
 

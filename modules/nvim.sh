@@ -1,9 +1,14 @@
 #!/bin/bash
-set -euo pipefail
+#
+# Script di provisioning per Neovim
+# Installa e configura l'editor Neovim e i plugin necessari
+# Richiede: curl, tar, git
 
-# Inclusione delle funzioni comuni (es. info, error, success)
-# Assicurati che il file common.sh sia presente nella directory relativa corretta
+# Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 ##############################
 # Configurazione di base

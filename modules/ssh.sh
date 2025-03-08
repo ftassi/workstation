@@ -1,8 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Script di provisioning per la configurazione SSH
+# Configura le chiavi e il config SSH dal repository cifrato
+# Richiede: ssh, ssh-keyscan
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 info "Inizio provisioning SSH..."
 
@@ -12,8 +18,7 @@ TARGET_DIR="$HOME/.ssh"
 
 # Controlla se la directory dei secrets esiste
 if [ ! -d "$SECRETS_DIR" ]; then
-    error "Directory dei secrets SSH non trovata: $SECRETS_DIR"
-    exit 1
+    cleanup "Directory dei secrets SSH non trovata: $SECRETS_DIR"
 fi
 
 # Crea la directory ~/.ssh se non esiste e imposta i permessi
@@ -43,8 +48,7 @@ for file in "${FILES[@]}"; do
                 ;;
         esac
     else
-        error "File $file non trovato in $SECRETS_DIR"
-        exit 1
+        cleanup "File $file non trovato in $SECRETS_DIR"
     fi
 done
 
@@ -62,9 +66,7 @@ if echo "$SSH_TEST_OUTPUT" | grep -q "successfully authenticated"; then
 elif echo "$SSH_TEST_OUTPUT" | grep -q "Hi "; then
     success "Connessione SSH a GitHub verificata con successo."
 else
-    error "Test di connessione SSH a GitHub fallito. Output:"
-    echo "$SSH_TEST_OUTPUT"
-    exit 1
+    cleanup "Test di connessione SSH a GitHub fallito. Output: $SSH_TEST_OUTPUT"
 fi
 
 success "Provisioning SSH completato con successo."

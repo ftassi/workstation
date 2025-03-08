@@ -1,8 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Script di provisioning per configurazioni shell
+# Installa e configura zsh, oh-my-zsh e plugin correlati
+# Richiede: git, curl
 
-# Inclusione delle funzioni comuni (info, error, success, ecc.)
+# Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 info "Inizio provisioning shell..."
 
@@ -10,8 +16,7 @@ info "Inizio provisioning shell..."
 # Verifica dei prerequisiti
 #####################
 if [ ! -d "$HOME/dotfiles" ]; then
-    error "La directory dotfiles ($HOME/dotfiles) non esiste. Assicurati di aver eseguito il modulo dotfiles prima."
-    exit 1
+    cleanup "La directory dotfiles ($HOME/dotfiles) non esiste. Assicurati di aver eseguito il modulo dotfiles prima."
 fi
 
 #####################
@@ -85,7 +90,7 @@ link_shell_dotfiles() {
             (cd "$HOME/dotfiles" && stow "$item")
         else
             error "Configurazione '$item' non trovata nella directory $HOME/dotfiles."
-            exit 1
+            cleanup "Errore durante l'esecuzione"
         fi
     done
     success "Linking dei dotfiles per la shell completato."

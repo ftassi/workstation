@@ -1,8 +1,14 @@
 #!/bin/bash
-set -e
+#
+# Script di provisioning per Regolith Desktop
+# Installa e configura l'ambiente desktop Regolith basato su i3wm
+# Richiede: wget, gpg, apt
 
 # Inclusione delle funzioni comuni
 source "$(dirname "$0")/../common.sh"
+
+# Imposta la gestione errori avanzata
+setup_error_handling
 
 info "Installazione di regolith-desktop..."
 
