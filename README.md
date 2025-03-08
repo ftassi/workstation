@@ -56,6 +56,10 @@ Sono file di utility per la manutenzione del repository e non necessari al provi
 ./decrypt.sh   # Per decriptare i file
 ```
 
+Lo script di utility `repo.sh` permette di eseguire lock e unlock del repository git-crypt utilizando la chiave locale.
+
+```bash
+
 ## Conclusione
 
 Dopo aver completato il provisioning, rimuovere il file dei sudoers temporanei:
