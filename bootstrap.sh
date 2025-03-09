@@ -11,7 +11,7 @@ set -euo pipefail
 
 # Funzione per gestire l'interruzione dello script
 cleanup_and_exit() {
-    echo -e "\n${YELLOW}[ATTENZIONE] Script interrotto dall'utente.${RESET}"
+    echo -e "\n[ATTENZIONE] Script interrotto dall'utente."
     exit 1
 }
 
