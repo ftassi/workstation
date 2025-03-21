@@ -14,6 +14,7 @@
 - **Error Handling**: Use `die()` to exit on error with appropriate message
 - **Logging**: Use `info()`, `success()`, and `error()` functions from common.sh
 - **Documentation**: Header comments for script purpose and dependencies
+- **Comments**: Header comments for a file are allowed, but not for functions or portions of code. Self explanatory code and function name are preferred.
 - **Modularity**: Use separate scripts in modules/ for each component
 - **Secret Management**: Use git-crypt for encrypted files in secrets/
 - **Security**: Password prompts use `read -s` for secure input
