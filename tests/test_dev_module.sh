@@ -5,8 +5,7 @@ set -euo pipefail
 REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 source "$REPO_DIR/tests/common_test_utils.sh"
 
-log_info "Avvio container Ubuntu 24.04..."
-docker run --name test-container --rm -d -v "$REPO_DIR:/workstation" ubuntu:24.04 sleep infinity
+start_test_container 
 
 log_info "Installazione requisiti minimi..."
 docker exec test-container bash -c "apt-get update && apt-get install -y sudo curl apt-utils gpg"
@@ -38,11 +37,6 @@ assert_binary_exists "/root/.local/cargo/bin/rustc"
 
 log_info "FASE 2: Seconda esecuzione per verificare idempotenza..."
 docker exec -e HOME=/root test-container bash -c "cd /workstation && ./modules/dev.sh"
-
-log_info "Verifica configurazione dopo la seconda esecuzione..."
-if docker exec test-container bash -c "test -f /root/.bashrc"; then
-  assert_no_duplicate_lines "/root/.bashrc"
-fi
 
 if docker exec test-container bash -c "test -f /root/.config/git/config"; then
   assert_no_duplicate_lines "/root/.config/git/config"

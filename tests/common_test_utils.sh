@@ -12,6 +12,22 @@ log_error() {
   echo -e "\033[0;31m[ERROR]\033[0m $1"
 }
 
+start_test_container() {
+  local image="${1:-ubuntu:24.04}"
+  if [ $# -gt 0 ]; then
+    shift
+    local command="$*"
+  else
+    local command="sleep infinity"
+  fi
+
+  log_info "Avvio container $image con comando: $command"
+  docker run --network=host --name test-container --rm -d -v "${REPO_DIR:-$(pwd)}:/workstation" "$image" bash -c "$command"
+
+  export CONTAINER_NAME="test-container"
+  export CONTAINER_IMAGE="$image"
+}
+
 assert_package_installed() {
   local package=$1
   local container=${2:-$CONTAINER_NAME}
