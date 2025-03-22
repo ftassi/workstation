@@ -58,43 +58,6 @@ Lo script di utility `repo.sh` permette di eseguire lock e unlock del repository
 
 ```bash
 
-## Esecuzione dei test
-
-Il repository include una suite di test automatizzati per verificare il corretto funzionamento dei moduli, inclusa la loro idempotenza. I test utilizzano Docker per creare ambienti isolati dove testare ogni modulo.
-
-Per eseguire tutti i test:
-
-```bash
-# Installa Docker (necessario per i test)
-sudo apt-get install -y docker.io
-sudo usermod -aG docker $USER
-# Potrebbe essere necessario un logout/login
-
-# Per eseguire i test in parallelo (richiede GNU Parallel)
-sudo apt-get install -y parallel
-make test
-
-# Puoi anche eseguire i test in sequenza se non hai GNU Parallel
-make test-sequential
-```
-
-Per eseguire un test specifico:
-
-```bash
-# Ad esempio, per testare solo il modulo shell
-./tests/test_shell_module.sh
-```
-
-In caso di errori nei test o interruzione, puoi pulire i container rimasti:
-
-```bash
-make test-clean
-```
-
-I test verificano due fasi:
-1. Prima esecuzione: verifica che il modulo installi correttamente tutti i pacchetti e configurazioni
-2. Seconda esecuzione: verifica l'idempotenza (nessuna duplicazione di configurazioni o errori)
-
 ## Conclusione
 
 Dopo aver completato il provisioning, rimuovere il file dei sudoers temporanei:
